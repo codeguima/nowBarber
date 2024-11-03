@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "96877895153",
+    "project_id": "nowbarber-83b54",
+    "storage_bucket": "nowbarber-83b54.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:96877895153:android:d15e6550d9bb7d31967850",
+        "android_client_info": {
+          "package_name": "br.edu.up.nowbarber"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDHGQlDcGKkTM1CIRfRihtN_zyq7D-kEN0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
