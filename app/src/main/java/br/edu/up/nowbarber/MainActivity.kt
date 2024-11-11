@@ -10,11 +10,13 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import br.edu.up.nowbarber.data.models.originalBarbeiros
+import br.edu.up.nowbarber.data.models.originalBarbearias
 import br.edu.up.nowbarber.ui.components.TelaDetalhesBarbearia
 import br.edu.up.nowbarber.ui.views.PrincipalPage
-import br.edu.up.nowbarber.ui.views.TelaLogin
 import br.edu.up.nowbarber.ui.views.TelaCadastro
+import br.edu.up.nowbarber.ui.views.TelaLogin
+
+
 import com.google.firebase.FirebaseApp
 
 class MainActivity : ComponentActivity() {
@@ -79,7 +81,7 @@ fun AppNavigation() {
 
         composable("detalhes/{barbeariaName}") { backStackEntry ->
             val barbeariaName = backStackEntry.arguments?.getString("barbeariaName")
-            val barbearia = originalBarbeiros.find { it.name == barbeariaName }
+            val barbearia = originalBarbearias.find { it.name == barbeariaName }
             if (barbearia != null) {
                 TelaDetalhesBarbearia(barbearia, navController)
             } else {
@@ -91,5 +93,3 @@ fun AppNavigation() {
 
     }
 }
-
-

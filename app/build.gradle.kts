@@ -1,10 +1,10 @@
 
-
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
     //Adicionar KSP
-    id("com.android.application")
+
+    id("com.google.devtools.ksp")
     id("com.google.gms.google-services")
 }
 
@@ -72,6 +72,8 @@ dependencies {
 
 
     implementation(libs.androidx.navigation.compose)
+    implementation(libs.firebase.firestore.ktx)
+    implementation(libs.mediation.test.suite)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -90,4 +92,13 @@ dependencies {
     //Firebase
     implementation(platform("com.google.firebase:firebase-bom:33.5.1"))
     implementation("com.google.firebase:firebase-analytics")
+
+    //viewModel
+
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.1") // Versão mais recente
+    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.6.1")   // Para LiveData
+    implementation("androidx.lifecycle:lifecycle-viewmodel-savedstate:2.6.1") // Para salvar estado em ViewModel
+
+    implementation("org.mindrot:jbcrypt:0.4")
+
 }

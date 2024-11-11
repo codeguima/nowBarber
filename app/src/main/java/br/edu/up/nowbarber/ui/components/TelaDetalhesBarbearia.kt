@@ -25,17 +25,17 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import br.edu.up.nowbarber.R
-import br.edu.up.nowbarber.data.models.Barbeiro
+import br.edu.up.nowbarber.data.models.Barbearia
 import br.edu.up.nowbarber.data.models.Servico
 import br.edu.up.nowbarber.ui.views.Agendamento
 import br.edu.up.nowbarber.ui.views.AgendamentoItem
-
 import java.util.*
+
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TelaDetalhesBarbearia(barbeiro: Barbeiro, navController: NavController) {
+fun TelaDetalhesBarbearia(barbeiro: Barbearia, navController: NavController) {
     var isFavorito by remember { mutableStateOf(false) }
     var selectedDate by remember { mutableStateOf<Calendar?>(null) }
     var selectedTime by remember { mutableStateOf<Calendar?>(null) }
@@ -80,9 +80,9 @@ fun TelaDetalhesBarbearia(barbeiro: Barbeiro, navController: NavController) {
 
                 // Serviços da barbearia
                 val servicos = listOf(
-                    Servico("Corte de cabelo", "R$ 50,00"),
-                    Servico("Barba", "R$ 30,00"),
-                    Servico("Corte + Barba", "R$ 70,00")
+                    Servico(1,"Corte de cabelo", "R$ 50,00"),
+                    Servico(2,"Barba", "R$ 30,00"),
+                    Servico(3,"Corte + Barba", "R$ 70,00")
                 )
 
                 LazyColumn(verticalArrangement = Arrangement.spacedBy(16.dp)) {
@@ -186,7 +186,7 @@ fun TimePickerDialog(onDismissRequest: () -> Unit, onTimeSelected: (Calendar) ->
 @Composable
 fun PreviewTelaDetalhesBarbearia() {
     // Simular um barbeiro para pré-visualização
-    val barberPreview = Barbeiro(
+    val barberPreview = Barbearia(
         name = "Barbearia Teste",
         location = "Rua Exemplo, 123",
         imageResId = R.drawable.ic_launcher_foreground // Substitua pelo seu recurso de imagem

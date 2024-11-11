@@ -16,11 +16,12 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import br.edu.up.nowbarber.data.models.Barbeiro
+import br.edu.up.nowbarber.data.models.Barbearia
+
 
 
 @Composable
-fun MessageCard(barbeiro: Barbeiro, navController: NavController) {
+fun MessageCard(barbeiro: Barbearia, navController: NavController) {
     Row(
         modifier = Modifier
             .padding(all = 10.dp)

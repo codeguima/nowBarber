@@ -17,6 +17,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.compose.ui.graphics.Color
 import br.edu.up.nowbarber.R
+import br.edu.up.nowbarber.ui.components.TopAppBar
 
 
 @Composable

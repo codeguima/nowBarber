@@ -23,6 +23,8 @@ public class LibrariesForLibs extends AbstractExternalDependencyFactory {
 
     private final AbstractExternalDependencyFactory owner = this;
     private final AndroidxLibraryAccessors laccForAndroidxLibraryAccessors = new AndroidxLibraryAccessors(owner);
+    private final FirebaseLibraryAccessors laccForFirebaseLibraryAccessors = new FirebaseLibraryAccessors(owner);
+    private final MediationLibraryAccessors laccForMediationLibraryAccessors = new MediationLibraryAccessors(owner);
     private final VersionAccessors vaccForVersionAccessors = new VersionAccessors(providers, config);
     private final BundleAccessors baccForBundleAccessors = new BundleAccessors(objects, providers, config, attributesFactory, capabilityNotationParser);
     private final PluginAccessors paccForPluginAccessors = new PluginAccessors(providers, config);
@@ -47,6 +49,20 @@ public class LibrariesForLibs extends AbstractExternalDependencyFactory {
      */
     public AndroidxLibraryAccessors getAndroidx() {
         return laccForAndroidxLibraryAccessors;
+    }
+
+    /**
+     * Group of libraries at <b>firebase</b>
+     */
+    public FirebaseLibraryAccessors getFirebase() {
+        return laccForFirebaseLibraryAccessors;
+    }
+
+    /**
+     * Group of libraries at <b>mediation</b>
+     */
+    public MediationLibraryAccessors getMediation() {
+        return laccForMediationLibraryAccessors;
     }
 
     /**
@@ -76,6 +92,7 @@ public class LibrariesForLibs extends AbstractExternalDependencyFactory {
         private final AndroidxCoreLibraryAccessors laccForAndroidxCoreLibraryAccessors = new AndroidxCoreLibraryAccessors(owner);
         private final AndroidxEspressoLibraryAccessors laccForAndroidxEspressoLibraryAccessors = new AndroidxEspressoLibraryAccessors(owner);
         private final AndroidxLifecycleLibraryAccessors laccForAndroidxLifecycleLibraryAccessors = new AndroidxLifecycleLibraryAccessors(owner);
+        private final AndroidxNavigationLibraryAccessors laccForAndroidxNavigationLibraryAccessors = new AndroidxNavigationLibraryAccessors(owner);
         private final AndroidxUiLibraryAccessors laccForAndroidxUiLibraryAccessors = new AndroidxUiLibraryAccessors(owner);
 
         public AndroidxLibraryAccessors(AbstractExternalDependencyFactory owner) { super(owner); }
@@ -133,6 +150,13 @@ public class LibrariesForLibs extends AbstractExternalDependencyFactory {
          */
         public AndroidxLifecycleLibraryAccessors getLifecycle() {
             return laccForAndroidxLifecycleLibraryAccessors;
+        }
+
+        /**
+         * Group of libraries at <b>androidx.navigation</b>
+         */
+        public AndroidxNavigationLibraryAccessors getNavigation() {
+            return laccForAndroidxNavigationLibraryAccessors;
         }
 
         /**
@@ -238,6 +262,22 @@ public class LibrariesForLibs extends AbstractExternalDependencyFactory {
 
     }
 
+    public static class AndroidxNavigationLibraryAccessors extends SubDependencyFactory {
+
+        public AndroidxNavigationLibraryAccessors(AbstractExternalDependencyFactory owner) { super(owner); }
+
+        /**
+         * Dependency provider for <b>compose</b> with <b>androidx.navigation:navigation-compose</b> coordinates and
+         * with version reference <b>navigationCompose</b>
+         * <p>
+         * This dependency was declared in catalog libs.versions.toml
+         */
+        public Provider<MinimalExternalModuleDependency> getCompose() {
+            return create("androidx.navigation.compose");
+        }
+
+    }
+
     public static class AndroidxUiLibraryAccessors extends SubDependencyFactory implements DependencyNotationSupplier {
         private final AndroidxUiTestLibraryAccessors laccForAndroidxUiTestLibraryAccessors = new AndroidxUiTestLibraryAccessors(owner);
         private final AndroidxUiToolingLibraryAccessors laccForAndroidxUiToolingLibraryAccessors = new AndroidxUiToolingLibraryAccessors(owner);
@@ -332,6 +372,66 @@ public class LibrariesForLibs extends AbstractExternalDependencyFactory {
 
     }
 
+    public static class FirebaseLibraryAccessors extends SubDependencyFactory {
+        private final FirebaseFirestoreLibraryAccessors laccForFirebaseFirestoreLibraryAccessors = new FirebaseFirestoreLibraryAccessors(owner);
+
+        public FirebaseLibraryAccessors(AbstractExternalDependencyFactory owner) { super(owner); }
+
+        /**
+         * Group of libraries at <b>firebase.firestore</b>
+         */
+        public FirebaseFirestoreLibraryAccessors getFirestore() {
+            return laccForFirebaseFirestoreLibraryAccessors;
+        }
+
+    }
+
+    public static class FirebaseFirestoreLibraryAccessors extends SubDependencyFactory {
+
+        public FirebaseFirestoreLibraryAccessors(AbstractExternalDependencyFactory owner) { super(owner); }
+
+        /**
+         * Dependency provider for <b>ktx</b> with <b>com.google.firebase:firebase-firestore-ktx</b> coordinates and
+         * with version reference <b>firebaseFirestoreKtx</b>
+         * <p>
+         * This dependency was declared in catalog libs.versions.toml
+         */
+        public Provider<MinimalExternalModuleDependency> getKtx() {
+            return create("firebase.firestore.ktx");
+        }
+
+    }
+
+    public static class MediationLibraryAccessors extends SubDependencyFactory {
+        private final MediationTestLibraryAccessors laccForMediationTestLibraryAccessors = new MediationTestLibraryAccessors(owner);
+
+        public MediationLibraryAccessors(AbstractExternalDependencyFactory owner) { super(owner); }
+
+        /**
+         * Group of libraries at <b>mediation.test</b>
+         */
+        public MediationTestLibraryAccessors getTest() {
+            return laccForMediationTestLibraryAccessors;
+        }
+
+    }
+
+    public static class MediationTestLibraryAccessors extends SubDependencyFactory {
+
+        public MediationTestLibraryAccessors(AbstractExternalDependencyFactory owner) { super(owner); }
+
+        /**
+         * Dependency provider for <b>suite</b> with <b>com.google.android.ads:mediation-test-suite</b> coordinates and
+         * with version reference <b>mediationTestSuite</b>
+         * <p>
+         * This dependency was declared in catalog libs.versions.toml
+         */
+        public Provider<MinimalExternalModuleDependency> getSuite() {
+            return create("mediation.test.suite");
+        }
+
+    }
+
     public static class VersionAccessors extends VersionFactory  {
 
         public VersionAccessors(ProviderFactory providers, DefaultVersionCatalog config) { super(providers, config); }
@@ -387,6 +487,16 @@ public class LibrariesForLibs extends AbstractExternalDependencyFactory {
         public Provider<String> getEspressoCore() { return getVersion("espressoCore"); }
 
         /**
+         * Version alias <b>firebaseFirestoreKtx</b> with value <b>25.1.1</b>
+         * <p>
+         * If the version is a rich version and cannot be represented as a
+         * single version string, an empty string is returned.
+         * <p>
+         * This version was declared in catalog libs.versions.toml
+         */
+        public Provider<String> getFirebaseFirestoreKtx() { return getVersion("firebaseFirestoreKtx"); }
+
+        /**
          * Version alias <b>junit</b> with value <b>4.13.2</b>
          * <p>
          * If the version is a rich version and cannot be represented as a
@@ -425,6 +535,26 @@ public class LibrariesForLibs extends AbstractExternalDependencyFactory {
          * This version was declared in catalog libs.versions.toml
          */
         public Provider<String> getLifecycleRuntimeKtx() { return getVersion("lifecycleRuntimeKtx"); }
+
+        /**
+         * Version alias <b>mediationTestSuite</b> with value <b>3.0.0</b>
+         * <p>
+         * If the version is a rich version and cannot be represented as a
+         * single version string, an empty string is returned.
+         * <p>
+         * This version was declared in catalog libs.versions.toml
+         */
+        public Provider<String> getMediationTestSuite() { return getVersion("mediationTestSuite"); }
+
+        /**
+         * Version alias <b>navigationCompose</b> with value <b>2.8.3</b>
+         * <p>
+         * If the version is a rich version and cannot be represented as a
+         * single version string, an empty string is returned.
+         * <p>
+         * This version was declared in catalog libs.versions.toml
+         */
+        public Provider<String> getNavigationCompose() { return getVersion("navigationCompose"); }
 
     }
 

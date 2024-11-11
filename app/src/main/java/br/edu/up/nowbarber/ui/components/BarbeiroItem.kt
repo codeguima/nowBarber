@@ -15,11 +15,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import br.edu.up.nowbarber.data.models.Barbeiro
+import br.edu.up.nowbarber.data.models.Barbearia
 
 
 @Composable
-fun BarbeiroItem(barbeiro: Barbeiro, navController: NavController) {
+fun BarbeiroItem(barbeiro: Barbearia, navController: NavController) {
     Row(
         modifier = Modifier
             .fillMaxWidth()

@@ -5,14 +5,14 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import br.edu.up.nowbarber.data.models.originalBarbeiros
+import br.edu.up.nowbarber.data.models.originalBarbearias
 import br.edu.up.nowbarber.ui.components.BottomAppBar
-import br.edu.up.nowbarber.ui.components.TelaDetalhesBarbearia
 import br.edu.up.nowbarber.ui.views.TelaAgendamento
 import br.edu.up.nowbarber.ui.views.TelaCadastro
 import br.edu.up.nowbarber.ui.views.TelaInicio
 import br.edu.up.nowbarber.ui.views.TelaLogin
 import br.edu.up.nowbarber.ui.views.TelaSearchBarber
+import br.edu.up.nowbarber.ui.components.TelaDetalhesBarbearia
 
 
 @Composable
@@ -35,7 +35,7 @@ fun MenuRotas(state: DrawerState) {
         }
         composable(TelaRotasBottom.TelaDetalhesBarbearia + "/{barbeariaNome}") { backStackEntry ->
             val barbeiroNome = backStackEntry.arguments?.getString("barbeariaNome")
-            val barbeiro = originalBarbeiros.find { it.name == barbeiroNome }
+            val barbeiro = originalBarbearias.find { it.name == barbeiroNome }
             barbeiro?.let {
                 TelaDetalhesBarbearia(it, navController)
             }
@@ -51,3 +51,4 @@ fun MenuRotas(state: DrawerState) {
         }
     }
 }
+

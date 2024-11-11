@@ -14,6 +14,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import br.edu.up.nowbarber.R
+
 import br.edu.up.nowbarber.ui.components.TopAppBar
 
 @Composable

@@ -18,11 +18,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.navigation.NavController
 import br.edu.up.nowbarber.R
-import br.edu.up.nowbarber.data.models.originalBarbeiros
+import br.edu.up.nowbarber.data.models.originalBarbearias
 import br.edu.up.nowbarber.ui.components.BarbeiroItem
 
 
@@ -32,7 +33,7 @@ fun TelaSearchBarber(state: DrawerState, navController: NavController, bottonNav
     var searchText by remember { mutableStateOf("") }
     var selectedCity by remember { mutableStateOf<String?>(null) }
 
-    val filteredBarbeiros = originalBarbeiros.filter { barbeiro ->
+    val filteredBarbeiros = originalBarbearias.filter { barbeiro ->
         (searchText.isBlank() || barbeiro.name.contains(searchText, ignoreCase = true)) &&
                 (selectedCity == null || barbeiro.location == selectedCity)
     }
@@ -77,7 +78,7 @@ fun TelaSearchBarber(state: DrawerState, navController: NavController, bottonNav
 
                 // Dropdown de Cidades
                 var expanded by remember { mutableStateOf(false) }
-                val cidades = originalBarbeiros.map { it.location }.distinct()
+                val cidades = originalBarbearias.map { it.location }.distinct()
 
                 Box(modifier = Modifier.fillMaxWidth()) {
                     Button(

@@ -1,13 +1,14 @@
-
 package br.edu.up.nowbarber.ui.components
 
 import androidx.compose.foundation.Image
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.FavoriteBorder
+
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -18,11 +19,11 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import br.edu.up.nowbarber.data.models.Barbeiro
+import br.edu.up.nowbarber.data.models.Barbearia
 
 
 @Composable
-fun BarbeariaItem(barbearia: Barbeiro, onFavoritoClick: () -> Unit) {
+fun BarbeariaItem(barbearia: Barbearia, onFavoritoClick: () -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()

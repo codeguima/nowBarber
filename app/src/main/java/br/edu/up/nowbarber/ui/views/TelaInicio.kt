@@ -71,9 +71,9 @@ fun SectionPropagandas(modifier: Modifier = Modifier) {
 fun SectionUltimosServicos(modifier: Modifier = Modifier) {
     // Simulação de uma lista de últimos serviços acessados
     val servicosRecentes = listOf(
-        Servico("Corte de Cabelo", 50.0.toString(), R.drawable.logo2),
-        Servico("Barba e Cabelo", 70.0.toString(), R.drawable.logo2),
-        Servico("Sombrancelha", 30.0.toString(), R.drawable.logo2)
+        Servico(1, "Corte de Cabelo", 50.0.toString(), R.drawable.logo2),
+        Servico(2, "Barba e Cabelo", 70.0.toString(), R.drawable.logo2),
+        Servico(3, "Sombrancelha", 30.0.toString(), R.drawable.logo2)
     )
 
     Column(

@@ -17,7 +17,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import br.edu.up.nowbarber.R
-
 import java.text.SimpleDateFormat
 import java.util.*
 

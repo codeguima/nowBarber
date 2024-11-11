@@ -1,6 +1,5 @@
 package br.edu.up.nowbarber.ui.views
 
-
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -35,8 +34,9 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import br.edu.up.nowbarber.R
 import br.edu.up.nowbarber.ui.navigation.MenuRotas
+import br.edu.up.nowbarber.R
+
 
 import kotlinx.coroutines.launch
 
@@ -89,8 +89,7 @@ fun PrincipalPage(onLogout: () -> Unit) {
                         imageVector = Icons.Filled.Home,
                         contentDescription = "Inicio",
                         modifier = Modifier.size(30.dp),
-                        tint = getTint(telaUmSelect)
-                    )
+                        tint = getTint(telaUmSelect))
 
                     Text(
                         color = getTint(telaUmSelect),
@@ -112,8 +111,7 @@ fun PrincipalPage(onLogout: () -> Unit) {
                         imageVector = Icons.Filled.Lock,
                         contentDescription = "Segurança",
                         modifier = Modifier.size(30.dp),
-                        tint = getTint(SecuritySelect)
-                    )
+                        tint = getTint(SecuritySelect))
 
                     Text(
                         color = getTint(SecuritySelect),
@@ -136,8 +134,7 @@ fun PrincipalPage(onLogout: () -> Unit) {
                         imageVector = Icons.Filled.ManageAccounts,
                         contentDescription = "Meus Acessos",
                         modifier = Modifier.size(30.dp),
-                        tint = getTint(AcessSelect)
-                    )
+                        tint = getTint(AcessSelect))
 
                     Text(
                         color = getTint(AcessSelect),
@@ -159,8 +156,7 @@ fun PrincipalPage(onLogout: () -> Unit) {
                         imageVector = Icons.Filled.Payment,
                         contentDescription = "Cartões",
                         modifier = Modifier.size(30.dp),
-                        tint = getTint(PaymentsSelect)
-                    )
+                        tint = getTint(PaymentsSelect))
 
                     Text(
                         color = getTint(PaymentsSelect),
@@ -182,8 +178,7 @@ fun PrincipalPage(onLogout: () -> Unit) {
                         imageVector = Icons.Filled.AccountCircle,
                         contentDescription = "Conta",
                         modifier = Modifier.size(30.dp),
-                        tint = getTint(AccountSelect)
-                    )
+                        tint = getTint(AccountSelect))
 
                     Text(
                         color = getTint(AccountSelect),
@@ -205,8 +200,7 @@ fun PrincipalPage(onLogout: () -> Unit) {
                         imageVector = Icons.Filled.FavoriteBorder,
                         contentDescription = "Favoritos",
                         modifier = Modifier.size(30.dp),
-                        tint = getTint(FavoriteSelect)
-                    )
+                        tint = getTint(FavoriteSelect))
 
                     Text(
                         color = getTint(FavoriteSelect),
