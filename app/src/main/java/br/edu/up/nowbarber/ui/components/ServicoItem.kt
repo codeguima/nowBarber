@@ -21,7 +21,8 @@ fun ServicoItem(servico: Servico, onClick: () -> Unit) {
             Column {
                 Text(text = servico.name, style = MaterialTheme.typography.titleMedium)
                 Spacer(modifier = Modifier.height(8.dp))
-                Text(text = servico.price, style = MaterialTheme.typography.bodyMedium)
+                // Convertendo o preço para string (se for número)
+                Text(text = "R$ ${servico.price}", style = MaterialTheme.typography.bodyMedium)
             }
         }
     }

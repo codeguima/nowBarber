@@ -1,7 +1,6 @@
 package br.edu.up.nowbarber.data.repositories
 
 
-import br.edu.up.nowbarber.dados.repositories.IRepository
 import br.edu.up.nowbarber.data.models.Barbearia
 import br.edu.up.nowbarber.data.models.BarbeariaDao
 

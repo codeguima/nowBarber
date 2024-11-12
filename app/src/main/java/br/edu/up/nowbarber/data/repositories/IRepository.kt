@@ -1,4 +1,4 @@
-package br.edu.up.nowbarber.dados.repositories
+package br.edu.up.nowbarber.data.repositories
 
 import kotlinx.coroutines.flow.Flow
 

@@ -15,10 +15,16 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import br.edu.up.nowbarber.R
+import br.edu.up.nowbarber.data.models.Cliente
+import br.edu.up.nowbarber.ui.viewmodels.ClienteViewModel
 
 
 @Composable
-fun TelaCadastro(navController: NavController, onRegisterSuccess: () -> Unit) {
+fun TelaCadastro(
+    navController: NavController,
+    clienteViewModel: ClienteViewModel,
+    function: () -> Unit
+) {
     // Variáveis de estado para armazenar nome, email, senha e a mensagem de erro
     var name by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
@@ -36,14 +42,13 @@ fun TelaCadastro(navController: NavController, onRegisterSuccess: () -> Unit) {
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center
             ) {
-
                 // Logotipo no topo
                 Image(
-                    painter = painterResource(id = R.drawable.logo3), // Substitua pelo nome da sua imagem
+                    painter = painterResource(id = R.drawable.logo3),
                     contentDescription = "Logotipo",
                     modifier = Modifier
-                        .size(200.dp) // Tamanho do logotipo
-                        .padding(bottom = 16.dp) // Espaçamento abaixo do logotipo
+                        .size(200.dp)
+                        .padding(bottom = 16.dp)
                 )
 
                 // Título
@@ -99,14 +104,25 @@ fun TelaCadastro(navController: NavController, onRegisterSuccess: () -> Unit) {
                     onClick = {
                         if (name.isNotEmpty() && email.isNotEmpty() && password.isNotEmpty()) {
                             errorMessage = "" // Limpa a mensagem de erro
-                            onRegisterSuccess() // Chama a função de sucesso ao cadastrar
+                            val cliente = Cliente(
+                                nome = name,
+                                email = email,
+                                senha = password,
+                                telefone = "",  // Ajuste conforme necessário
+                                nascimento = "",  // Ajuste conforme necessário
+                                genero = ""  // Ajuste conforme necessário
+                            )
+                            clienteViewModel.gravarCliente(cliente)
+                            navController.navigate("login") { // Redireciona para a tela de login
+                                popUpTo("cadastro") { inclusive = true }
+                            }
                         } else {
                             errorMessage = "Preencha todos os campos" // Exibe mensagem de erro
                         }
                     },
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = colorResource(id = R.color.principal), // Cor de fundo do botão
-                        contentColor = Color.White // Cor do texto do botão
+                        containerColor = colorResource(id = R.color.principal),
+                        contentColor = Color.White
                     ),
                     modifier = Modifier.fillMaxWidth()
                 ) {
@@ -118,7 +134,6 @@ fun TelaCadastro(navController: NavController, onRegisterSuccess: () -> Unit) {
                 // Botão de Voltar
                 TextButton(
                     onClick = {
-                        // Navegar de volta para a tela de login
                         navController.navigate("login") {
                             popUpTo("cadastro") { inclusive = true }
                         }
@@ -135,3 +150,4 @@ fun TelaCadastro(navController: NavController, onRegisterSuccess: () -> Unit) {
         }
     )
 }
+

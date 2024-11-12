@@ -14,36 +14,40 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import br.edu.up.nowbarber.R
-import br.edu.up.nowbarber.data.models.Servico
 import br.edu.up.nowbarber.ui.components.TopAppBar
 
 @Composable
-fun TelaInicio(state: DrawerState, bottonNavBar: @Composable () -> Unit) {
+fun TelaInicio(state: DrawerState) {
     Scaffold(
         topBar = { TopAppBar(state) },
-        content = { paddingValues ->
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(paddingValues)
-            ) {
-                // Seção de Propagandas
-                SectionPropagandas(modifier = Modifier.weight(1f))
+        content = { p -> ConteudoTelaInicio (Modifier.padding(p))
 
-                Spacer(modifier = Modifier.height(16.dp))
+        }
 
-                // Seção Últimos Serviços Acessados
-                SectionUltimosServicos(modifier = Modifier.weight(1f))
-            }
-        },
-        bottomBar = { bottonNavBar() }
     )
 }
 
+@Composable
+fun ConteudoTelaInicio (modifier: Modifier){
+
+    Column(
+        modifier = modifier
+            .fillMaxSize()
+
+    ) {
+        // Seção de Propagandas
+        SectionPropagandas(modifier = Modifier.weight(1f))
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        // Seção Últimos Serviços Acessados
+        SectionUltimosServicos(modifier = Modifier.weight(1f))
+    }
+
+}
 @Composable
 fun SectionPropagandas(modifier: Modifier = Modifier) {
     // Imagem de propaganda
@@ -71,9 +75,9 @@ fun SectionPropagandas(modifier: Modifier = Modifier) {
 fun SectionUltimosServicos(modifier: Modifier = Modifier) {
     // Simulação de uma lista de últimos serviços acessados
     val servicosRecentes = listOf(
-        Servico(1, "Corte de Cabelo", 50.0.toString(), R.drawable.logo2),
-        Servico(2, "Barba e Cabelo", 70.0.toString(), R.drawable.logo2),
-        Servico(3, "Sombrancelha", 30.0.toString(), R.drawable.logo2)
+        Servico(1, "Corte de Cabelo", 50.0.toString(), R.drawable.logo2.toString()),
+        Servico(2, "Barba e Cabelo", 70.0.toString(), R.drawable.logo2.toString()),
+        Servico(3, "Sombrancelha", 30.0.toString(), R.drawable.logo2.toString())
     )
 
     Column(
@@ -137,11 +141,3 @@ fun UltimoServicoItem(servico: Servico) {
     }
 }
 
-@Preview(showBackground = true)
-@Composable
-fun PreviewTelaInicio() {
-    TelaInicio(
-        state = rememberDrawerState(DrawerValue.Closed), // Simulação do DrawerState
-        bottonNavBar = { }
-    )
-}

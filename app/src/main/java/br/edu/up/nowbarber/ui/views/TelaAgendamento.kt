@@ -17,39 +17,39 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import br.edu.up.nowbarber.R
+import br.edu.up.nowbarber.data.models.Servico
+import br.edu.up.nowbarber.ui.components.TopAppBar
 import java.text.SimpleDateFormat
 import java.util.*
 
-data class Agendamento(val name: String, val serviceValue: String, val date: Date, val time: String, val imageResId: Int)
-
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TelaAgendamento(state: DrawerState, bottonNavBar: @Composable () -> Unit) {
+fun TelaAgendamento(state: DrawerState) {
+    // Lista de agendamentos inicial com valores de exemplo
     val agendamentos = remember {
         mutableStateListOf(
-            Agendamento("Barbearia do Zé", 50.00.toString(), Date(), "14:00", R.drawable.logo2),
-            Agendamento("Corte Rápido", 40.00.toString(), Date(), "15:00", R.drawable.logo2),
-            Agendamento("Barba e Cabelo", 70.00.toString(), Date(), "16:00", R.drawable.logo2)
+            Servico(1, "Barbearia do Zé", "50.00", Date().toString(), R.drawable.logo2),
+            Servico(2, "Corte Rápido", "40.00", Date().toString(), R.drawable.logo2),
+            Servico(3, "Barba e Cabelo", "70.00", Date().toString(), R.drawable.logo2)
         )
     }
 
     Scaffold(
+        topBar = { TopAppBar(state) },
         content = { paddingValues ->
             ConteudoTelaAgendamento(
                 modifier = Modifier.padding(paddingValues),
                 agendamentos = agendamentos,
                 onDelete = { agendamento -> agendamentos.remove(agendamento) }
             )
-        },
-        bottomBar = { bottonNavBar() }
+        }
     )
 }
 
 @Composable
 fun ConteudoTelaAgendamento(
-    modifier: Modifier,
-    agendamentos: List<Agendamento>,
-    onDelete: (Agendamento) -> Unit
+    modifier: Modifier = Modifier,
+    agendamentos: List<Servico>,
+    onDelete: (Servico) -> Unit
 ) {
     Column(
         modifier = modifier
@@ -59,10 +59,16 @@ fun ConteudoTelaAgendamento(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         if (agendamentos.isEmpty()) {
-            Text(text = "Nenhum agendamento encontrado.", style = MaterialTheme.typography.bodyLarge)
+            Text(
+                text = "Nenhum agendamento encontrado.",
+                style = MaterialTheme.typography.bodyLarge
+            )
         } else {
             agendamentos.forEach { agendamento ->
-                AgendamentoItem(agendamento = agendamento, onDelete = onDelete)
+                AgendamentoItem(
+                    agendamento = agendamento,
+                    onDelete = onDelete
+                )
                 Spacer(modifier = Modifier.height(16.dp))
             }
         }
@@ -70,24 +76,31 @@ fun ConteudoTelaAgendamento(
 }
 
 @Composable
-fun AgendamentoItem(agendamento: Agendamento, onDelete: (Agendamento) -> Unit) {
+fun AgendamentoItem(
+    agendamento: Servico,
+    onDelete: (Servico) -> Unit
+) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .padding(10.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Image(
-            painter = painterResource(agendamento.imageResId),
-            contentDescription = null,
-            modifier = Modifier
-                .size(80.dp)
-                .clip(CircleShape)
-                .border(1.5.dp, MaterialTheme.colorScheme.primary, CircleShape)
-        )
+        // Imagem do agendamento
+        agendamento.imageResId?.let { imageResId ->
+            Image(
+                painter = painterResource(imageResId),
+                contentDescription = null,
+                modifier = Modifier
+                    .size(80.dp)
+                    .clip(CircleShape)
+                    .border(1.5.dp, MaterialTheme.colorScheme.primary, CircleShape)
+            )
+        }
 
         Spacer(modifier = Modifier.width(16.dp))
 
+        // Informações do agendamento
         Column(modifier = Modifier.weight(1f)) {
             Text(
                 text = agendamento.name,
@@ -97,19 +110,23 @@ fun AgendamentoItem(agendamento: Agendamento, onDelete: (Agendamento) -> Unit) {
             )
             Spacer(modifier = Modifier.height(4.dp))
             Text(
-                text = "R$ ${agendamento.serviceValue}",
+                text = "R$ ${agendamento.price}",
                 fontSize = 16.sp,
                 style = MaterialTheme.typography.bodyMedium
             )
 
-            val sdf = remember { SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()) }
+            val formattedDate = remember {
+                SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+                    .format(Date(agendamento.date))
+            }
             Text(
-                text = "${sdf.format(agendamento.date)} às ${agendamento.time}",
+                text = formattedDate,
                 fontSize = 14.sp,
                 style = MaterialTheme.typography.bodySmall
             )
         }
 
+        // Ícone de exclusão
         Icon(
             imageVector = Icons.Default.Delete,
             contentDescription = "Delete Agendamento",

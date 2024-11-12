@@ -1,8 +1,5 @@
 package br.edu.up.nowbarber.data.repositories
 
-
-
-import br.edu.up.nowbarber.dados.repositories.IRepository
 import br.edu.up.nowbarber.data.models.Barbearia
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.channels.awaitClose

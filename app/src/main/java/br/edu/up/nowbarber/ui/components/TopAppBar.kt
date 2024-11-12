@@ -28,7 +28,6 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-
 fun TopAppBar(state: DrawerState) {
     val scope = rememberCoroutineScope()
 

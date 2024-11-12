@@ -2,7 +2,6 @@ package br.edu.up.nowbarber.data.repositories
 
 
 
-import br.edu.up.nowbarber.dados.repositories.IRepository
 import br.edu.up.nowbarber.data.models.Cliente
 import br.edu.up.nowbarber.data.models.ClienteDao
 import kotlinx.coroutines.flow.Flow

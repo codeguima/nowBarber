@@ -21,6 +21,7 @@ import androidx.compose.ui.unit.dp
 
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavController
 import br.edu.up.nowbarber.R
 import br.edu.up.nowbarber.data.models.originalBarbearias
@@ -28,7 +29,16 @@ import br.edu.up.nowbarber.ui.components.BarbeiroItem
 
 
 @Composable
-fun TelaSearchBarber(state: DrawerState, navController: NavController, bottonNavBar: @Composable () -> Unit) {
+fun TelaSearchBarber(state: DrawerState, navController: NavController) {
+    Scaffold(
+        topBar = { br.edu.up.nowbarber.ui.components.TopAppBar(state) },
+        content = { p -> ConteudoTelaSearchBarber(Modifier.padding(p), navController) },
+    )
+}
+
+
+@Composable
+fun ConteudoTelaSearchBarber(modifier : Modifier, navController: NavController) {
 
     var searchText by remember { mutableStateOf("") }
     var selectedCity by remember { mutableStateOf<String?>(null) }
@@ -38,14 +48,9 @@ fun TelaSearchBarber(state: DrawerState, navController: NavController, bottonNav
                 (selectedCity == null || barbeiro.location == selectedCity)
     }
 
-
-
-    Scaffold(
-        content = { paddingValues ->
             Column(
-                modifier = Modifier
+                modifier = modifier
                     .fillMaxSize()
-                    .padding(paddingValues)
                     .padding(16.dp)
             ) {
                 // Texto "Olá, Jhonny" no topo
@@ -131,9 +136,7 @@ fun TelaSearchBarber(state: DrawerState, navController: NavController, bottonNav
                 }
 
             }
-        },
-        bottomBar = { bottonNavBar() }
-    )
+
 }
 
 

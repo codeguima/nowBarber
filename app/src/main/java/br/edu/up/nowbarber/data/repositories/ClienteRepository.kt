@@ -1,7 +1,5 @@
 package br.edu.up.nowbarber.data.repositories
 
-
-import br.edu.up.nowbarber.dados.repositories.IRepository
 import br.edu.up.nowbarber.data.models.Cliente
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow

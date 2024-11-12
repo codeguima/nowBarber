@@ -18,7 +18,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import br.edu.up.nowbarber.R
 import br.edu.up.nowbarber.ui.components.TopAppBar
 
-@OptIn(ExperimentalMaterial3Api::class)
+
 @Composable
 fun TelaSeguranca(state: DrawerState) {
     Scaffold(

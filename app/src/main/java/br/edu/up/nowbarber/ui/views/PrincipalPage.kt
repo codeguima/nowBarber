@@ -1,13 +1,7 @@
 package br.edu.up.nowbarber.ui.views
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.FavoriteBorder
@@ -15,60 +9,31 @@ import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.ManageAccounts
 import androidx.compose.material.icons.filled.Payment
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.DrawerState
-import androidx.compose.material3.DrawerValue
-import androidx.compose.material3.Icon
-import androidx.compose.material3.ModalNavigationDrawer
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
-import androidx.compose.material3.rememberDrawerState
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavHostController
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import br.edu.up.nowbarber.ui.navigation.MenuRotas
 import br.edu.up.nowbarber.R
-
-
+import br.edu.up.nowbarber.ui.navigation.BarberNavHost
+import br.edu.up.nowbarber.ui.navigation.TelaRotasBottom
 import kotlinx.coroutines.launch
-
-object BarberAppRotas {
-    const val MENU_ROTAS = "navegação"
-    const val TELA_SEGURANCA = "segurança"
-    const val TELA_MEUS_ACESSOS = "meus acessos"
-    const val TELA_PAYMENTS = "cartoes"
-    const val TELA_ACCOUNT_USER = "conta"
-    const val TELA_FAVORITOS = "favoritos"
-}
-
 
 @Composable
 fun PrincipalPage(onLogout: () -> Unit) {
-    val state = rememberDrawerState(initialValue = DrawerValue.Closed)
+    val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val coroutineScope = rememberCoroutineScope()
-
     val navController = rememberNavController()
     val currentBack by navController.currentBackStackEntryAsState()
-    val rotaAtual = currentBack?.destination?.route ?: BarberAppRotas.MENU_ROTAS
-
-    val telaUmSelect = rotaAtual == BarberAppRotas.MENU_ROTAS
-    val SecuritySelect = rotaAtual == BarberAppRotas.TELA_SEGURANCA
-    val AcessSelect = rotaAtual == BarberAppRotas.TELA_MEUS_ACESSOS
-    val PaymentsSelect = rotaAtual == BarberAppRotas.TELA_PAYMENTS
-    val AccountSelect = rotaAtual == BarberAppRotas.TELA_ACCOUNT_USER
-    val FavoriteSelect = rotaAtual == BarberAppRotas.TELA_FAVORITOS
-
+    val rotaAtual = currentBack?.destination?.route
 
     ModalNavigationDrawer(
-        drawerState = state,
+        drawerState = drawerState,
         drawerContent = {
             Column(
                 modifier = Modifier
@@ -78,143 +43,72 @@ fun PrincipalPage(onLogout: () -> Unit) {
             ) {
                 Spacer(modifier = Modifier.height(70.dp))
 
-                TextButton( colors = ButtonDefaults.buttonColors(
-                    containerColor = getBack(telaUmSelect)
-                ),
+                DrawerButton(
+                    label = "Inicio",
+                    icon = Icons.Filled.Home,
+                    isSelected = rotaAtual == TelaRotasBottom.TelaInicio,
                     onClick = {
-                        navController.navigate(BarberAppRotas.MENU_ROTAS)
-                        coroutineScope.launch { state.close() }
-                    }) {
-                    Icon(
-                        imageVector = Icons.Filled.Home,
-                        contentDescription = "Inicio",
-                        modifier = Modifier.size(30.dp),
-                        tint = getTint(telaUmSelect))
+                        navController.navigate(TelaRotasBottom.TelaInicio)
+                        coroutineScope.launch { drawerState.close() }
+                    }
+                )
 
-                    Text(
-                        color = getTint(telaUmSelect),
-                        text = "Inicio", fontSize = 20.sp,
-                        modifier = Modifier.padding(8.dp)
-                    )
-                }
-
-                TextButton(
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = getBack(SecuritySelect)
-                    ),
+                DrawerButton(
+                    label = "Segurança",
+                    icon = Icons.Filled.Lock,
+                    isSelected = rotaAtual == TelaRotasBottom.TelaSeguranca,
                     onClick = {
-                        navController.navigate(BarberAppRotas.TELA_SEGURANCA)
-                        coroutineScope.launch { state.close() }
-                    }) {
+                        navController.navigate(TelaRotasBottom.TelaSeguranca)
+                        coroutineScope.launch { drawerState.close() }
+                    }
+                )
 
-                    Icon(
-                        imageVector = Icons.Filled.Lock,
-                        contentDescription = "Segurança",
-                        modifier = Modifier.size(30.dp),
-                        tint = getTint(SecuritySelect))
-
-                    Text(
-                        color = getTint(SecuritySelect),
-                        text = "Segurança", fontSize = 20.sp,
-                        modifier = Modifier.padding(8.dp)
-                    )
-                }
-
-
-                TextButton( colors = ButtonDefaults.buttonColors(
-                    containerColor = getBack(AcessSelect)
-                ),
+                DrawerButton(
+                    label = "Meus Acessos",
+                    icon = Icons.Filled.ManageAccounts,
+                    isSelected = rotaAtual == TelaRotasBottom.TelaMeusAcessos,
                     onClick = {
-                        navController.navigate(BarberAppRotas.TELA_MEUS_ACESSOS)
-                        coroutineScope.launch { state.close() }
-                    }) {
+                        navController.navigate(TelaRotasBottom.TelaMeusAcessos)
+                        coroutineScope.launch { drawerState.close() }
+                    }
+                )
 
-
-                    Icon(
-                        imageVector = Icons.Filled.ManageAccounts,
-                        contentDescription = "Meus Acessos",
-                        modifier = Modifier.size(30.dp),
-                        tint = getTint(AcessSelect))
-
-                    Text(
-                        color = getTint(AcessSelect),
-                        text = "Meus Acessos", fontSize = 20.sp,
-                        modifier = Modifier.padding(8.dp)
-                    )
-                }
-
-                TextButton( colors = ButtonDefaults.buttonColors(
-                    containerColor = getBack(PaymentsSelect)
-                ),
+                DrawerButton(
+                    label = "Cartões",
+                    icon = Icons.Filled.Payment,
+                    isSelected = rotaAtual == TelaRotasBottom.TelaPayments,
                     onClick = {
-                        navController.navigate(BarberAppRotas.TELA_PAYMENTS)
-                        coroutineScope.launch { state.close() }
-                    }) {
+                        navController.navigate(TelaRotasBottom.TelaPayments)
+                        coroutineScope.launch { drawerState.close() }
+                    }
+                )
 
-
-                    Icon(
-                        imageVector = Icons.Filled.Payment,
-                        contentDescription = "Cartões",
-                        modifier = Modifier.size(30.dp),
-                        tint = getTint(PaymentsSelect))
-
-                    Text(
-                        color = getTint(PaymentsSelect),
-                        text = "Cartões", fontSize = 20.sp,
-                        modifier = Modifier.padding(8.dp)
-                    )
-                }
-
-                TextButton( colors = ButtonDefaults.buttonColors(
-                    containerColor = getBack(AccountSelect)
-                ),
+                DrawerButton(
+                    label = "Conta",
+                    icon = Icons.Filled.AccountCircle,
+                    isSelected = rotaAtual == TelaRotasBottom.TelaAccountUser,
                     onClick = {
-                        navController.navigate(BarberAppRotas.TELA_ACCOUNT_USER)
-                        coroutineScope.launch { state.close() }
-                    }) {
+                        navController.navigate(TelaRotasBottom.TelaAccountUser)
+                        coroutineScope.launch { drawerState.close() }
+                    }
+                )
 
-
-                    Icon(
-                        imageVector = Icons.Filled.AccountCircle,
-                        contentDescription = "Conta",
-                        modifier = Modifier.size(30.dp),
-                        tint = getTint(AccountSelect))
-
-                    Text(
-                        color = getTint(AccountSelect),
-                        text = "Conta", fontSize = 20.sp,
-                        modifier = Modifier.padding(8.dp)
-                    )
-                }
-
-                TextButton(
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = getBack(FavoriteSelect)
-                    ),
+                DrawerButton(
+                    label = "Favoritos",
+                    icon = Icons.Filled.FavoriteBorder,
+                    isSelected = rotaAtual == TelaRotasBottom.TelaFavoritos,
                     onClick = {
-                        navController.navigate(BarberAppRotas.TELA_FAVORITOS)
-                        coroutineScope.launch { state.close() }
-                    }) {
-
-                    Icon(
-                        imageVector = Icons.Filled.FavoriteBorder,
-                        contentDescription = "Favoritos",
-                        modifier = Modifier.size(30.dp),
-                        tint = getTint(FavoriteSelect))
-
-                    Text(
-                        color = getTint(FavoriteSelect),
-                        text = "Favoritos", fontSize = 20.sp,
-                        modifier = Modifier.padding(8.dp)
-                    )
-                }
+                        navController.navigate(TelaRotasBottom.TelaFavoritos)
+                        coroutineScope.launch { drawerState.close() }
+                    }
+                )
 
                 Spacer(modifier = Modifier.height(300.dp))
 
                 TextButton(
                     onClick = {
                         onLogout()
-                        coroutineScope.launch { state.close() }
+                        coroutineScope.launch { drawerState.close() }
                     }
                 ) {
                     Text(
@@ -224,55 +118,44 @@ fun PrincipalPage(onLogout: () -> Unit) {
                         modifier = Modifier.padding(30.dp, 5.dp)
                     )
                 }
-
             }
         },
         content = {
-            BarberNavHost(navController, state)
+            BarberNavHost(navController, drawerState)
         }
     )
 }
 
 @Composable
-private fun BarberNavHost(
-    navController: NavHostController,
-    state: DrawerState
+fun DrawerButton(
+    label: String,
+    icon: ImageVector,
+    isSelected: Boolean,
+    onClick: () -> Unit
 ) {
-    NavHost(
-        navController = navController,
-        startDestination = BarberAppRotas.MENU_ROTAS
+    TextButton(
+        colors = ButtonDefaults.buttonColors(containerColor = getBack(isSelected)),
+        onClick = onClick
     ) {
-        composable(BarberAppRotas.MENU_ROTAS) {
-            MenuRotas(state)
-        }
-        composable(BarberAppRotas.TELA_SEGURANCA) {
-            TelaSeguranca(state)
-        }
-        composable(BarberAppRotas.TELA_MEUS_ACESSOS) {
-            TelaMeusAcessos(state)
-        }
-        composable(BarberAppRotas.TELA_PAYMENTS) {
-            TelaPayments(state)
-        }
-        composable(BarberAppRotas.TELA_ACCOUNT_USER) {
-            TelaAccountUser(state)
-        }
-        composable(BarberAppRotas.TELA_FAVORITOS) {
-            TelaFavoritos(state)
-        }
-
+        Icon(
+            imageVector = icon,
+            contentDescription = label,
+            modifier = Modifier.size(30.dp),
+            tint = getTint(isSelected)
+        )
+        Text(
+            color = getTint(isSelected),
+            text = label,
+            fontSize = 20.sp,
+            modifier = Modifier.padding(8.dp)
+        )
     }
 }
 
-
 fun getTint(selected: Boolean): Color {
-    return if (selected) Color.Black
-    else Color.DarkGray
+    return if (selected) Color.Black else Color.DarkGray
 }
 
 fun getBack(selected: Boolean): Color {
-    return if (selected) Color.White
-    else Color.Transparent
+    return if (selected) Color.White else Color.Transparent
 }
-
-

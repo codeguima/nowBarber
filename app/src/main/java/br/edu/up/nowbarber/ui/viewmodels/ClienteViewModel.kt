@@ -3,7 +3,7 @@ package br.edu.up.nowbarber.ui.viewmodels
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import br.edu.up.nowbarber.data.models.Cliente
-import br.edu.up.nowbarber.data.repositories.ClienteRepository
+import br.edu.up.nowbarber.data.repositories.ServicoRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
@@ -11,7 +11,7 @@ import kotlinx.coroutines.launch
 
 
 class ClienteViewModel(
-    private val repository: ClienteRepository
+    private val repository: ServicoRepository
 ) : ViewModel() {
 
     private val _cliente = MutableStateFlow<List<Cliente>>(emptyList())

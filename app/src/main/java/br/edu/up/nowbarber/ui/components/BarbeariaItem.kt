@@ -31,13 +31,15 @@ fun BarbeariaItem(barbearia: Barbearia, onFavoritoClick: () -> Unit) {
             .clickable { /* Ação de clique para abrir detalhes */ },
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Image(
-            painter = painterResource(barbearia.imageResId),
-            contentDescription = barbearia.name,
-            modifier = Modifier
-                .size(60.dp)
-                .clip(CircleShape)
-        )
+        barbearia.imageResId?.let { painterResource(it) }?.let {
+            Image(
+                painter = it,
+                contentDescription = barbearia.name,
+                modifier = Modifier
+                    .size(60.dp)
+                    .clip(CircleShape)
+            )
+        }
 
         Spacer(modifier = Modifier.width(16.dp))
 
