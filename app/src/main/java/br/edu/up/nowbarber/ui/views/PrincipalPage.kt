@@ -22,10 +22,18 @@ import androidx.navigation.compose.rememberNavController
 import br.edu.up.nowbarber.R
 import br.edu.up.nowbarber.ui.navigation.BarberNavHost
 import br.edu.up.nowbarber.ui.navigation.TelaRotasBottom
+import br.edu.up.nowbarber.ui.viewmodels.ClienteViewModel
+import br.edu.up.nowbarber.ui.viewmodels.ServicoViewModel
 import kotlinx.coroutines.launch
 
 @Composable
-fun PrincipalPage(onLogout: () -> Unit) {
+fun PrincipalPage(
+    usuarioId: Int,
+    clienteViewModel: ClienteViewModel,
+    servicoViewModel: ServicoViewModel,
+    onLogout: () -> Unit
+
+) {
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val coroutineScope = rememberCoroutineScope()
     val navController = rememberNavController()
@@ -121,10 +129,19 @@ fun PrincipalPage(onLogout: () -> Unit) {
             }
         },
         content = {
-            BarberNavHost(navController, drawerState)
+            // Passando o usuarioId para o BarberNavHost
+            BarberNavHost(
+                navController = navController,
+                state = drawerState,
+                usuarioId = usuarioId,
+                clienteViewModel = clienteViewModel,
+                servicoViewModel = servicoViewModel
+            )
         }
     )
 }
+
+
 
 @Composable
 fun DrawerButton(

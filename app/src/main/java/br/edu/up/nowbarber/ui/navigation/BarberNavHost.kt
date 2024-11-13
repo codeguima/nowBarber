@@ -9,16 +9,15 @@ import androidx.navigation.compose.composable
 import br.edu.up.nowbarber.data.models.originalBarbearias
 import br.edu.up.nowbarber.ui.viewmodels.ClienteViewModel
 import br.edu.up.nowbarber.ui.viewmodels.ServicoViewModel
-
-
 import br.edu.up.nowbarber.ui.views.*
 
 @Composable
 fun BarberNavHost(
     navController: NavHostController,
     state: DrawerState,
-    servicoViewModel: ServicoViewModel,  // ViewModel já passado
-    clienteViewModel: ClienteViewModel
+    servicoViewModel: ServicoViewModel,  // ViewModel para serviços
+    clienteViewModel: ClienteViewModel,   // ViewModel para cliente
+    usuarioId: Int // Passando o usuarioId para ser usado nas telas
 ) {
     NavHost(
         navController = navController,
@@ -34,16 +33,19 @@ fun BarberNavHost(
             TelaAgendamento(state)
         }
         composable(TelaRotasBottom.TelaSeguranca) {
-            TelaSeguranca(state)
+            // Passando o usuarioId e clienteViewModel para manipular dados de segurança
+            TelaSeguranca(state, clienteViewModel, usuarioId)
         }
         composable(TelaRotasBottom.TelaMeusAcessos) {
-            TelaMeusAcessos(state)
+            // Passando o usuarioId para tela de meus acessos
+            TelaMeusAcessos(state, usuarioId)
         }
         composable(TelaRotasBottom.TelaPayments) {
             TelaPayments(state)
         }
         composable(TelaRotasBottom.TelaAccountUser) {
-            TelaAccountUser(state)
+            // Passando o usuarioId para tela de conta do usuário
+            TelaAccountUser(state, usuarioId)
         }
         composable(TelaRotasBottom.TelaFavoritos) {
             TelaFavoritos(state)
@@ -52,13 +54,17 @@ fun BarberNavHost(
             val barbeiroNome = backStackEntry.arguments?.getString("barbeariaNome")
             val barbeiro = originalBarbearias.find { it.name == barbeiroNome }
             if (barbeiro != null) {
-                TelaDetalhesBarbearia(state, navController, servicoViewModel) // Passando viewModel
+                TelaDetalhesBarbearia(state, navController, servicoViewModel) // Passando o ViewModel de serviços
             } else {
                 Text("Barbearia não encontrada")
             }
         }
         composable(TelaRotasBottom.TelaLogin) {
-            TelaLogin(navController) { /* Lógica para login bem-sucedido */ }
+            TelaLogin(navController, clienteViewModel) {
+                navController.navigate(TelaRotasBottom.TelaInicio) {
+                    popUpTo(TelaRotasBottom.TelaLogin) { inclusive = true }
+                }
+            }
         }
         composable(TelaRotasBottom.TelaCadastro) {
             TelaCadastro(navController, clienteViewModel) {

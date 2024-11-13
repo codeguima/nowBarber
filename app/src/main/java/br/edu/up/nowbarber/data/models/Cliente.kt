@@ -9,7 +9,7 @@ data class Cliente(
     var id: Int? = null,
     val nome: String,
     val telefone: String,
-    val nascimento: String,
+    val dataNascimento: String,
     val genero: String,
     val email: String,
     val senha: String

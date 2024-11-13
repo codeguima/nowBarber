@@ -15,7 +15,11 @@ interface ClienteDao {
     fun listar(): Flow<List<Cliente>>
 
     @Query("select * from tab_cliente where id = :idx")
-    suspend fun buscarPorId(idx: Int): Cliente
+    suspend fun buscarPorId(idx: kotlin.String?): Cliente
+
+    @Query("select * from tab_cliente where email = :email")
+    suspend fun buscarPorEmail(email: String): Cliente?
+
 
     //@Update @Insert
     @Upsert
@@ -23,4 +27,6 @@ interface ClienteDao {
 
     @Delete
     suspend fun excluir(cliente: Cliente)
+
+
 }

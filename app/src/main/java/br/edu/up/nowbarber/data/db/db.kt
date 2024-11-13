@@ -13,9 +13,7 @@ import br.edu.up.nowbarber.data.models.Cliente
 import br.edu.up.nowbarber.data.models.ClienteDao
 import br.edu.up.nowbarber.data.models.Servico
 
-// Importar outras entidades e DAOs conforme necessário
 
-// Lista todas as entidades do banco de dados na anotação @Database
 @Database(
     entities = [
         Barbearia::class,
@@ -29,7 +27,7 @@ import br.edu.up.nowbarber.data.models.Servico
 abstract class AppDatabase : RoomDatabase() {
     abstract fun getBarbeariaDao(): BarbeariaDao
     abstract fun getServicoDao(): ServicoDao
-    abstract fun getClienteDao(): ClienteDao
+    abstract fun getClienteoDao(): ClienteDao
     // Adicione métodos para outros DAOs aqui
 }
 

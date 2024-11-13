@@ -11,8 +11,6 @@ import androidx.compose.runtime.remember
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import br.edu.up.nowbarber.data.models.ServicoDao
-import br.edu.up.nowbarber.data.repositories.IRepository
 import br.edu.up.nowbarber.ui.viewmodels.ClienteViewModel
 import br.edu.up.nowbarber.ui.views.PrincipalPage
 import br.edu.up.nowbarber.ui.views.TelaCadastro
@@ -22,6 +20,9 @@ import br.edu.up.nowbarber.data.repositories.ServicoRemoteRepository
 import br.edu.up.nowbarber.data.repositories.ServicoLocalRepository
 import br.edu.up.nowbarber.ui.navigation.TelaRotasBottom
 import br.edu.up.nowbarber.data.db.abrirBanco
+import br.edu.up.nowbarber.data.repositories.ClienteLocalRepository
+import br.edu.up.nowbarber.data.repositories.ClienteRemoteRepository
+import br.edu.up.nowbarber.data.repositories.ClienteRepository
 
 class MainActivity : ComponentActivity() {
 
@@ -31,23 +32,28 @@ class MainActivity : ComponentActivity() {
         setContent {
 
 
-        val isLocal = false
+
 
             //Abertura do banco de dados
-            //val context = LocalContext.current
 
-                val db = remember { abrirBanco(this) }
+            val db = remember { abrirBanco(this) }
 
 
-                // Criação dos repositórios
-                val servicoRemoteRepo = ServicoRemoteRepository()
-                val servicoLocalRepo = ServicoLocalRepository(db.getServicoDao())
+            // Criação dos repositórios
+            val servicoRemoteRepo = ServicoRemoteRepository()
+            val servicoLocalRepo = ServicoLocalRepository(db.getServicoDao())
 
-                // Criação do repositório de serviço
-                val servicoRepository = ServicoRepository(servicoRemoteRepo, servicoLocalRepo)
+            val clienteRemoteRepo = ClienteRemoteRepository()
+            val clienteLocalRepo = ClienteLocalRepository(db.getClienteoDao())
 
-                // Instanciando o ClienteViewModel (passando o repositório de serviço conforme necessário)
-                val clienteViewModel = ClienteViewModel(repository = servicoRepository)  // Dependendo de onde o ClienteRepository se conecta ao ServicoRepository
+            // Criação do repositório de serviço
+            val servicoRepository = ServicoRepository(servicoRemoteRepo, servicoLocalRepo)
+
+
+            // Instanciando o ClienteViewModel (passando o repositório de serviço conforme necessário)
+            val clienteRepository = ClienteRepository(clienteRemoteRepo, clienteLocalRepo)
+
+            val clienteViewModel = ClienteViewModel(clienteRepository)
 
 
             MaterialTheme {
@@ -68,7 +74,7 @@ fun AppNavigation(clienteViewModel: ClienteViewModel) {
         startDestination = TelaRotasBottom.TelaLogin // Tela de login
     ) {
         composable(TelaRotasBottom.TelaLogin) {
-            TelaLogin(navController) {  // Ação de login
+            TelaLogin(navController, clienteViewModel) {  // Ação de login
                 navController.navigate(TelaRotasBottom.TelaInicio) {
                     popUpTo(TelaRotasBottom.TelaLogin) { inclusive = true }
                 }
@@ -76,10 +82,7 @@ fun AppNavigation(clienteViewModel: ClienteViewModel) {
         }
 
         composable(TelaRotasBottom.TelaCadastro) {
-            TelaCadastro(
-                navController = navController,
-                clienteViewModel = clienteViewModel  // Passando o ViewModel de Cliente
-            ) {
+            TelaCadastro(navController,clienteViewModel) {
                 navController.navigate(TelaRotasBottom.TelaLogin) {  // Navegação após o sucesso do cadastro
                     popUpTo(TelaRotasBottom.TelaCadastro) { inclusive = true }
                 }

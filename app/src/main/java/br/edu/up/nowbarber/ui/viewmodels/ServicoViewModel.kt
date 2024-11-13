@@ -26,7 +26,7 @@ class ServicoViewModel(
 
     suspend fun buscarServicoPorId(servicoId: Int): Servico?{
         // return withContext(Dispatchers.IO) {
-        return repository.buscarPorId(servicoId)
+        return repository.buscarPorId(servicoId.toString())
         //}
     }
 

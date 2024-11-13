@@ -13,23 +13,36 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.lifecycle.viewmodel.compose.viewModel
 import br.edu.up.nowbarber.R
 
 import br.edu.up.nowbarber.ui.components.TopAppBar
+import br.edu.up.nowbarber.ui.viewmodels.ClienteViewModel
 
 @Composable
-fun TelaMeusAcessos(state: DrawerState) {
+fun TelaMeusAcessos(state: DrawerState, usuarioId: Int) {
+    val viewModel: ClienteViewModel = viewModel()
+    var email by remember { mutableStateOf("") }
+
+    // Usando LaunchedEffect para carregar os dados de acesso (como e-mail)
+    LaunchedEffect(usuarioId) {
+        usuarioId?.let {
+            // Buscar o e-mail do usuário de forma assíncrona
+            val usuario = viewModel.buscarPorId(usuarioId)
+            usuario?.let {
+                email = it.email
+            }
+        }
+    }
+
     Scaffold(
         topBar = { TopAppBar(state) },
-        content = { p -> ConteudoMeusAcessos(Modifier.padding(p)) },
-        //bottomBar = { BarberBottomBar() }
+        content = { p -> ConteudoMeusAcessos(Modifier.padding(p), email) }
     )
 }
 
 @Composable
-fun ConteudoMeusAcessos(modifier: Modifier) {
-    var email by remember { mutableStateOf("usuario@exemplo.com") }
-
+fun ConteudoMeusAcessos(modifier: Modifier, email: String) {
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -37,62 +50,26 @@ fun ConteudoMeusAcessos(modifier: Modifier) {
         verticalArrangement = Arrangement.spacedBy(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text(text = "Meus Acessos", fontSize = 20.sp, modifier = Modifier.padding(bottom = 16.dp))
+        Text(text = "Meus Acessos", fontSize = 20.sp)
 
         // Campo de E-mail
         OutlinedTextField(
             value = email,
-            onValueChange = { email = it },
+            onValueChange = { /* Atualizar e-mail */ },
             label = { Text("E-mail") },
-            keyboardOptions = KeyboardOptions.Default.copy(
-                keyboardType = KeyboardType.Email,
-                imeAction = ImeAction.Done
-            ),
             modifier = Modifier.fillMaxWidth()
         )
 
-        // Botão Salvar Edição
+        // Botões para vinculação de acesso, por exemplo, Google/Facebook
         Button(
-            onClick = { /* Ação para salvar o e-mail */ },
+            onClick = { /* Implementar ação de vinculação */ },
             colors = ButtonDefaults.buttonColors(
-                containerColor = colorResource(id = R.color.principal), // Cor de fundo do botão
-                contentColor = Color.White // Cor do texto do botão
+                containerColor = colorResource(id = R.color.principal),
+                contentColor = Color.White
             ),
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 8.dp)
+            modifier = Modifier.fillMaxWidth()
         ) {
-            Text(text = "Salvar Edição")
-        }
-
-        Spacer(modifier = Modifier.height(32.dp))
-
-        // Botão Vincular com Google
-        Button(
-            onClick = { /* Ação para vincular com Google */ },
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 8.dp),
-            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF4285F4)) // Azul do Google
-        ) {
-            Text(text = "Vincular com Google", color = Color.White)
-        }
-
-        // Botão Vincular com Facebook
-        Button(
-            onClick = { /* Ação para vincular com Facebook */ },
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 8.dp),
-            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF4267B2)) // Azul do Facebook
-        ) {
-            Text(text = "Vincular com Facebook", color = Color.White)
+            Text(text = "Vincular Conta do Google")
         }
     }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun PreviewTelaMeusAcessos() {
-    TelaMeusAcessos(state = DrawerState(DrawerValue.Closed))
 }

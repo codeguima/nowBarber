@@ -6,6 +6,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 
@@ -17,38 +18,49 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.compose.ui.graphics.Color
 import br.edu.up.nowbarber.R
-import br.edu.up.nowbarber.ui.components.TopAppBar
+import br.edu.up.nowbarber.ui.navigation.TelaRotasBottom
+import br.edu.up.nowbarber.ui.viewmodels.ClienteViewModel
 
 
 @Composable
-fun TelaLogin(navController: NavController, onLoginSuccess: () -> Unit) {
-    // Definir estados e credenciais corretas
-    val correctEmail = "teste"
-    val correctPassword = "123"
-    var email by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
-    var errorMessage by remember { mutableStateOf("") }
+fun TelaLogin(
+    navController: NavController,
+    clienteViewModel: ClienteViewModel,
+    function: () -> Unit
+) {
+    val emailState = remember { mutableStateOf("") }
+    val passwordState = remember { mutableStateOf("") }
 
-    // Função para validar credenciais
-    fun validateLogin() {
-        if (email == correctEmail && password == correctPassword) {
-            errorMessage = ""
-            onLoginSuccess()
-        } else {
-            errorMessage = "Credenciais inválidas"
+    // Observa o estado de login e a mensagem de erro do ViewModel
+    val loginStatus by clienteViewModel.loginStatus.observeAsState()
+    val errorMessage by clienteViewModel.errorMessage.observeAsState()
+
+    // Navegação automática após login bem-sucedido
+    LaunchedEffect(loginStatus) {
+        if (loginStatus == true) {
+            navController.navigate(TelaRotasBottom.TelaInicio) {
+                popUpTo(TelaRotasBottom.TelaLogin) { inclusive = true }
+            }
+            clienteViewModel.limparLoginStatus() // Limpar status após navegação
         }
     }
 
     LoginScreen(
-        email = email,
-        onEmailChange = { email = it },
-        password = password,
-        onPasswordChange = { password = it },
-        errorMessage = errorMessage,
-        onLoginClick = { validateLogin() },
-        onRegisterClick = { navController.navigate("cadastro") }
+        email = emailState.value,
+        onEmailChange = { emailState.value = it },
+        password = passwordState.value,
+        onPasswordChange = { passwordState.value = it },
+        errorMessage = errorMessage ?: "",
+        onLoginClick = {
+            clienteViewModel.verificarLogin(emailState.value, passwordState.value)
+        },
+        onRegisterClick = {
+            navController.navigate(TelaRotasBottom.TelaCadastro)
+        }
     )
 }
+
+
 
 @Composable
 fun LoginScreen(

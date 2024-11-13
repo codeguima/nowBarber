@@ -28,7 +28,7 @@ class BarbeariaRepository(
         }
     }
 
-    override suspend fun buscarPorId(id: Int): Barbearia? {
+    override suspend fun buscarPorId(id: String?): Barbearia? {
         // Tenta buscar no banco local
         var barbearia = localRepo.buscarPorId(id)
         if (barbearia == null) {

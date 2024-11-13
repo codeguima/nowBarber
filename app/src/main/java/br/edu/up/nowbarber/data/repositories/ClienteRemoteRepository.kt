@@ -34,9 +34,13 @@ class ClienteRemoteRepository : IRepository<Cliente> {
             awaitClose { listener.remove() }
         }
 
-    override suspend fun buscarPorId(id: Int): Cliente? {
+    override suspend fun buscarPorId(id: String?): Cliente? {
         val doc = clienteCollection.document(id.toString()).get().await()
         return doc.toObject(Cliente::class.java)
+    }
+
+    override suspend fun verificarLogin(email: String, senha: String): Boolean {
+        TODO("Not yet implemented")
     }
 
     override suspend fun gravar(item: Cliente) {

@@ -13,26 +13,48 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.lifecycle.viewmodel.compose.viewModel
 import br.edu.up.nowbarber.R
 import br.edu.up.nowbarber.ui.components.TopAppBar
+import br.edu.up.nowbarber.ui.viewmodels.ClienteViewModel
 
 
 @Composable
-fun TelaAccountUser(state: DrawerState) {
+fun TelaAccountUser(state: DrawerState, usuarioId: Int) {
+    val viewModel: ClienteViewModel = viewModel() // Supondo que o ViewModel seja UserViewModel
+    var nomeCompleto by remember { mutableStateOf("") }
+    var celular by remember { mutableStateOf("") }
+    var dataNascimento by remember { mutableStateOf("") }
+    var genero by remember { mutableStateOf("") }
+
+    // Usando LaunchedEffect para carregar os dados do usuário quando o usuarioId mudar
+    LaunchedEffect(usuarioId) {
+        usuarioId?.let {
+            // Buscar os dados do usuário de forma assíncrona
+            val usuario = viewModel.buscarPorId(usuarioId)
+            usuario?.let {
+                nomeCompleto = it.nome
+                celular = it.telefone
+                dataNascimento = it.dataNascimento
+                genero = it.genero
+            }
+        }
+    }
+
     Scaffold(
         topBar = { TopAppBar(state) },
-        content = { p -> ConteudoAccountUser(Modifier.padding(p)) },
-
+        content = { p -> ConteudoAccountUser(Modifier.padding(p), nomeCompleto, celular, dataNascimento, genero) }
     )
 }
 
 @Composable
-fun ConteudoAccountUser(modifier: Modifier) {
-    var nomeCompleto by remember { mutableStateOf("João da Silva") }
-    var celular by remember { mutableStateOf("(11) 98765-4321") }
-    var dataNascimento by remember { mutableStateOf("01/01/1990") }
-    var genero by remember { mutableStateOf("Masculino") }
-
+fun ConteudoAccountUser(
+    modifier: Modifier,
+    nomeCompleto: String,
+    celular: String,
+    dataNascimento: String,
+    genero: String
+) {
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -40,41 +62,28 @@ fun ConteudoAccountUser(modifier: Modifier) {
         verticalArrangement = Arrangement.spacedBy(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text(text = "Minha Conta", fontSize = 20.sp)
+        Text(text = "Minhas Conta", fontSize = 20.sp)
 
-        // Campo Nome Completo
+        // Campos para exibir e editar os dados do usuário
         OutlinedTextField(
             value = nomeCompleto,
-            onValueChange = { nomeCompleto = it },
+            onValueChange = { /* Atualizar o nome */ },
             label = { Text("Nome Completo") },
             modifier = Modifier.fillMaxWidth()
         )
-
-        // Campo Celular
         OutlinedTextField(
             value = celular,
-            onValueChange = { celular = it },
+            onValueChange = { /* Atualizar o celular */ },
             label = { Text("Celular") },
-            keyboardOptions = KeyboardOptions.Default.copy(
-                keyboardType = KeyboardType.Phone,
-                imeAction = ImeAction.Next
-            ),
             modifier = Modifier.fillMaxWidth()
         )
-
-        // Campo Data de Nascimento
         OutlinedTextField(
             value = dataNascimento,
-            onValueChange = { dataNascimento = it },
+            onValueChange = { /* Atualizar a data de nascimento */ },
             label = { Text("Data de Nascimento") },
-            keyboardOptions = KeyboardOptions.Default.copy(
-                keyboardType = KeyboardType.Number,
-                imeAction = ImeAction.Next
-            ),
             modifier = Modifier.fillMaxWidth()
         )
-
-        // Campo Gênero
+        // Gênero
         Text(text = "Gênero", fontSize = 18.sp, modifier = Modifier.padding(vertical = 8.dp))
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -83,24 +92,22 @@ fun ConteudoAccountUser(modifier: Modifier) {
             GenderButton(
                 gender = "Masculino",
                 selectedGender = genero,
-                onClick = { genero = "Masculino" }
+                onClick = { genero != "Masculino" }
             )
             GenderButton(
                 gender = "Feminino",
                 selectedGender = genero,
-                onClick = { genero = "Feminino" }
+                onClick = { genero != "Feminino" }
             )
             GenderButton(
                 gender = "Outro",
                 selectedGender = genero,
-                onClick = { genero = "Outro" }
+                onClick = { genero != "Outro" }
             )
         }
-
         // Botão Salvar
         Button(
-            onClick = { /* Implementar ação de salvar */ }
-            ,
+            onClick = { /* Implementar ação de salvar */ },
             colors = ButtonDefaults.buttonColors(
                 containerColor = colorResource(id = R.color.principal), // Cor de fundo do botão
                 contentColor = Color.White // Cor do texto do botão
@@ -125,10 +132,4 @@ fun GenderButton(gender: String, selectedGender: String, onClick: () -> Unit) {
     ) {
         Text(text = gender)
     }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun PreviewTelaAccountUser() {
-    TelaAccountUser(state = DrawerState(DrawerValue.Closed))
 }

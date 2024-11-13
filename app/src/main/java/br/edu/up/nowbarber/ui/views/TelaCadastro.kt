@@ -25,8 +25,9 @@ fun TelaCadastro(
     clienteViewModel: ClienteViewModel,
     function: () -> Unit
 ) {
-    // Variáveis de estado para armazenar nome, email, senha e a mensagem de erro
+    // Variáveis de estado para armazenar nome, telefone, email, senha e a mensagem de erro
     var name by remember { mutableStateOf("") }
+    var phone by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var errorMessage by remember { mutableStateOf("") }
@@ -68,6 +69,16 @@ fun TelaCadastro(
 
                 Spacer(modifier = Modifier.height(16.dp))
 
+                // Campo de Telefone
+                OutlinedTextField(
+                    value = phone,
+                    onValueChange = { phone = it },
+                    label = { Text("Telefone") },
+                    modifier = Modifier.fillMaxWidth()
+                )
+
+                Spacer(modifier = Modifier.height(16.dp))
+
                 // Campo de Email
                 OutlinedTextField(
                     value = email,
@@ -102,22 +113,24 @@ fun TelaCadastro(
                 // Botão de Cadastro
                 Button(
                     onClick = {
-                        if (name.isNotEmpty() && email.isNotEmpty() && password.isNotEmpty()) {
+                        // Validação dos campos obrigatórios
+                        if (name.isNotEmpty() && phone.isNotEmpty() && email.isNotEmpty() && password.isNotEmpty()) {
                             errorMessage = "" // Limpa a mensagem de erro
                             val cliente = Cliente(
                                 nome = name,
+                                telefone = phone,
                                 email = email,
                                 senha = password,
-                                telefone = "",  // Ajuste conforme necessário
-                                nascimento = "",  // Ajuste conforme necessário
-                                genero = ""  // Ajuste conforme necessário
+                                dataNascimento = "",  // Nascimento pode ser deixado em branco
+                                genero = ""  // Gênero pode ser deixado em branco
                             )
-                            clienteViewModel.gravarCliente(cliente)
+                            // Chama a função de salvar o cliente
+                            clienteViewModel.gravar(cliente)
                             navController.navigate("login") { // Redireciona para a tela de login
                                 popUpTo("cadastro") { inclusive = true }
                             }
                         } else {
-                            errorMessage = "Preencha todos os campos" // Exibe mensagem de erro
+                            errorMessage = "Preencha todos os campos obrigatórios!" // Exibe mensagem de erro
                         }
                     },
                     colors = ButtonDefaults.buttonColors(
@@ -150,4 +163,3 @@ fun TelaCadastro(
         }
     )
 }
-

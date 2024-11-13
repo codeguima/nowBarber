@@ -28,7 +28,7 @@ class ServicoRepository (
             }
         }
 
-        override suspend fun buscarPorId(id: Int): Servico? {
+        override suspend fun buscarPorId(id: String?): Servico? {
             var servico = localRepo.buscarPorId(id)
             if (servico == null) {
                 servico = remoteRepo.buscarPorId(id)
@@ -37,7 +37,13 @@ class ServicoRepository (
             return servico
         }
 
-        override suspend fun gravar(servico: Servico) {
+
+
+    override suspend fun verificarLogin(email: String, senha: String): Boolean {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun gravar(servico: Servico) {
 
             localRepo.gravar(servico)
             remoteRepo.gravar(servico)

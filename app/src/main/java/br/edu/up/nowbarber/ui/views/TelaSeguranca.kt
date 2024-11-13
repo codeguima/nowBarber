@@ -15,25 +15,48 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.lifecycle.viewmodel.compose.viewModel
 import br.edu.up.nowbarber.R
 import br.edu.up.nowbarber.ui.components.TopAppBar
+import br.edu.up.nowbarber.ui.viewmodels.ClienteViewModel
 
 
 @Composable
-fun TelaSeguranca(state: DrawerState) {
-    Scaffold(
-        topBar = { TopAppBar(state) },
-        content = { p -> ConteudoTelaSeguranca(Modifier.padding(p)) },
-    )
-}
+fun TelaSeguranca(state: DrawerState, clienteViewModel: ClienteViewModel, usuarioId: Int) {
 
-@Composable
-fun ConteudoTelaSeguranca(modifier: Modifier) {
+
+    val viewModel: ClienteViewModel = viewModel()
     var senhaAtual by remember { mutableStateOf("") }
     var novaSenha by remember { mutableStateOf("") }
     var confirmarSenha by remember { mutableStateOf("") }
     var senhaVisivel by remember { mutableStateOf(false) }
 
+    // Usando LaunchedEffect para carregar as configurações de segurança
+    LaunchedEffect(usuarioId) {
+        usuarioId?.let {
+            // Buscar as configurações de segurança do usuário de forma assíncrona
+            val configuracoesSeguranca = viewModel.buscarPorId(usuarioId)
+            configuracoesSeguranca?.let {
+                // Carregar as informações da configuração de segurança
+                senhaAtual = it.senha
+            }
+        }
+    }
+
+    Scaffold(
+        topBar = { TopAppBar(state) },
+        content = { p -> ConteudoTelaSeguranca(Modifier.padding(p), senhaAtual, novaSenha, confirmarSenha, senhaVisivel) }
+    )
+}
+
+@Composable
+fun ConteudoTelaSeguranca(
+    modifier: Modifier,
+    senhaAtual: String,
+    novaSenha: String,
+    confirmarSenha: String,
+    senhaVisivel: Boolean
+) {
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -41,17 +64,17 @@ fun ConteudoTelaSeguranca(modifier: Modifier) {
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text(text = "Senhas de acesso", fontSize = 20.sp, modifier = Modifier.padding(bottom = 32.dp))
+        Text(text = "Senhas de Acesso", fontSize = 20.sp, modifier = Modifier.padding(bottom = 32.dp))
 
-        // Campo de senha atual com visualização
+        // Campos de senha
         OutlinedTextField(
             value = senhaAtual,
-            onValueChange = { senhaAtual = it },
+            onValueChange = { /* Atualizar senha atual */ },
             label = { Text("Senha atual") },
             visualTransformation = if (senhaVisivel) VisualTransformation.None else PasswordVisualTransformation(),
             trailingIcon = {
                 val image = if (senhaVisivel) Icons.Filled.Visibility else Icons.Filled.VisibilityOff
-                IconButton(onClick = { senhaVisivel = !senhaVisivel }) {
+                IconButton(onClick = { senhaVisivel != senhaVisivel }) {
                     Icon(imageVector = image, contentDescription = null)
                 }
             },
@@ -60,15 +83,14 @@ fun ConteudoTelaSeguranca(modifier: Modifier) {
                 .padding(bottom = 16.dp)
         )
 
-        // Campo de nova senha com visualização
         OutlinedTextField(
             value = novaSenha,
-            onValueChange = { novaSenha = it },
+            onValueChange = { /* Atualizar nova senha */ },
             label = { Text("Nova senha") },
             visualTransformation = if (senhaVisivel) VisualTransformation.None else PasswordVisualTransformation(),
             trailingIcon = {
                 val image = if (senhaVisivel) Icons.Filled.Visibility else Icons.Filled.VisibilityOff
-                IconButton(onClick = { senhaVisivel = !senhaVisivel }) {
+                IconButton(onClick = { senhaVisivel != senhaVisivel }) {
                     Icon(imageVector = image, contentDescription = null)
                 }
             },
@@ -77,15 +99,14 @@ fun ConteudoTelaSeguranca(modifier: Modifier) {
                 .padding(bottom = 16.dp)
         )
 
-        // Campo de confirmar senha com visualização
         OutlinedTextField(
             value = confirmarSenha,
-            onValueChange = { confirmarSenha = it },
+            onValueChange = { /* Atualizar confirmar senha */ },
             label = { Text("Confirmar nova senha") },
             visualTransformation = if (senhaVisivel) VisualTransformation.None else PasswordVisualTransformation(),
             trailingIcon = {
                 val image = if (senhaVisivel) Icons.Filled.Visibility else Icons.Filled.VisibilityOff
-                IconButton(onClick = { senhaVisivel = !senhaVisivel }) {
+                IconButton(onClick = { senhaVisivel != senhaVisivel }) {
                     Icon(imageVector = image, contentDescription = null)
                 }
             },
@@ -95,12 +116,10 @@ fun ConteudoTelaSeguranca(modifier: Modifier) {
         )
 
         Button(
-            onClick = {
-                // Lógica para salvar as senhas
-            },
+            onClick = { /* Lógica para salvar as senhas */ },
             colors = ButtonDefaults.buttonColors(
-                containerColor = colorResource(id = R.color.principal), // Cor de fundo do botão
-                contentColor = Color.White // Cor do texto do botão
+                containerColor = colorResource(id = R.color.principal),
+                contentColor = Color.White
             ),
             modifier = Modifier
                 .fillMaxWidth()
@@ -109,10 +128,4 @@ fun ConteudoTelaSeguranca(modifier: Modifier) {
             Text(text = "Salvar")
         }
     }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun PreviewTelaSeguranca() {
-    TelaSeguranca(state = DrawerState(DrawerValue.Closed))
 }

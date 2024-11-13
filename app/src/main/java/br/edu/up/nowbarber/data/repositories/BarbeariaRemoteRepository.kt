@@ -24,7 +24,7 @@ class BarbeariaRemoteRepository : IRepository<Barbearia> {
         awaitClose { listener.remove() }
     }
 
-    override suspend fun buscarPorId(id: Int): Barbearia? {
+    override suspend fun buscarPorId(id: String?): Barbearia? {
         val doc = collection.document(id.toString()).get().await()
         return doc.toObject(Barbearia::class.java)
     }
