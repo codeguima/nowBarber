@@ -14,15 +14,30 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
 import br.edu.up.nowbarber.R
 import br.edu.up.nowbarber.ui.components.TopAppBar
 import br.edu.up.nowbarber.ui.viewmodels.ClienteViewModel
+import br.edu.up.nowbarber.ui.viewmodels.SessionViewModel
 
 
 @Composable
-fun TelaSeguranca(state: DrawerState, clienteViewModel: ClienteViewModel, usuarioId: Int) {
+fun TelaSeguranca(
+    state: DrawerState,
+    clienteViewModel: ClienteViewModel,
+    sessionViewModel: SessionViewModel = viewModel()
+
+) {
+
+    // Obtendo o ID do usuário logado
+    val usuarioId = sessionViewModel.usuarioId
+
+    // Resto da lógica da tela
+    if (usuarioId != null) {
+        // Aqui você pode usar o usuarioId
+    } else {
+        Text("Usuário não autenticado!")
+    }
 
 
     val viewModel: ClienteViewModel = viewModel()

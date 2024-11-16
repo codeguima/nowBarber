@@ -3,14 +3,11 @@ package br.edu.up.nowbarber.ui.views
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AccountCircle
-import androidx.compose.material.icons.filled.FavoriteBorder
-import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.Lock
-import androidx.compose.material.icons.filled.ManageAccounts
-import androidx.compose.material.icons.filled.Payment
+import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -24,15 +21,15 @@ import br.edu.up.nowbarber.ui.navigation.BarberNavHost
 import br.edu.up.nowbarber.ui.navigation.TelaRotasBottom
 import br.edu.up.nowbarber.ui.viewmodels.ClienteViewModel
 import br.edu.up.nowbarber.ui.viewmodels.ServicoViewModel
+import br.edu.up.nowbarber.ui.viewmodels.SessionViewModel
 import kotlinx.coroutines.launch
 
 @Composable
 fun PrincipalPage(
-    usuarioId: Int,
+    sessionViewModel: SessionViewModel,
     clienteViewModel: ClienteViewModel,
     servicoViewModel: ServicoViewModel,
     onLogout: () -> Unit
-
 ) {
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val coroutineScope = rememberCoroutineScope()
@@ -51,35 +48,21 @@ fun PrincipalPage(
             ) {
                 Spacer(modifier = Modifier.height(70.dp))
 
-                DrawerButton(
-                    label = "Inicio",
-                    icon = Icons.Filled.Home,
-                    isSelected = rotaAtual == TelaRotasBottom.TelaInicio,
-                    onClick = {
-                        navController.navigate(TelaRotasBottom.TelaInicio)
-                        coroutineScope.launch { drawerState.close() }
-                    }
-                )
+                // Botões do Drawer
+                DrawerButton("Inicio", Icons.Filled.Home, rotaAtual == TelaRotasBottom.TelaInicio) {
+                    navController.navigate(TelaRotasBottom.TelaInicio)
+                    coroutineScope.launch { drawerState.close() }
+                }
 
-                DrawerButton(
-                    label = "Segurança",
-                    icon = Icons.Filled.Lock,
-                    isSelected = rotaAtual == TelaRotasBottom.TelaSeguranca,
-                    onClick = {
-                        navController.navigate(TelaRotasBottom.TelaSeguranca)
-                        coroutineScope.launch { drawerState.close() }
-                    }
-                )
+                DrawerButton("Segurança", Icons.Filled.Lock, rotaAtual == TelaRotasBottom.TelaSeguranca) {
+                    navController.navigate(TelaRotasBottom.TelaSeguranca)
+                    coroutineScope.launch { drawerState.close() }
+                }
 
-                DrawerButton(
-                    label = "Meus Acessos",
-                    icon = Icons.Filled.ManageAccounts,
-                    isSelected = rotaAtual == TelaRotasBottom.TelaMeusAcessos,
-                    onClick = {
-                        navController.navigate(TelaRotasBottom.TelaMeusAcessos)
-                        coroutineScope.launch { drawerState.close() }
-                    }
-                )
+                DrawerButton("Meus Acessos", Icons.Filled.ManageAccounts, rotaAtual == TelaRotasBottom.TelaMeusAcessos) {
+                    navController.navigate(TelaRotasBottom.TelaMeusAcessos)
+                    coroutineScope.launch { drawerState.close() }
+                }
 
                 DrawerButton(
                     label = "Cartões",
@@ -110,36 +93,31 @@ fun PrincipalPage(
                         coroutineScope.launch { drawerState.close() }
                     }
                 )
-
+                // Outros botões...
                 Spacer(modifier = Modifier.height(300.dp))
 
-                TextButton(
-                    onClick = {
-                        onLogout()
-                        coroutineScope.launch { drawerState.close() }
-                    }
-                ) {
-                    Text(
-                        color = Color.Red,
-                        text = "Sair",
-                        fontSize = 20.sp,
-                        modifier = Modifier.padding(30.dp, 5.dp)
-                    )
+                // Botão de Logout
+                TextButton(onClick = {
+                    onLogout()
+                    clienteViewModel.logout()
+                    coroutineScope.launch { drawerState.close() }
+                }) {
+                    Text(color = Color.Red, text = "Sair", fontSize = 20.sp, modifier = Modifier.padding(30.dp, 5.dp))
                 }
             }
         },
         content = {
-            // Passando o usuarioId para o BarberNavHost
             BarberNavHost(
                 navController = navController,
                 state = drawerState,
-                usuarioId = usuarioId,
+                sessionViewModel = sessionViewModel,
                 clienteViewModel = clienteViewModel,
                 servicoViewModel = servicoViewModel
             )
         }
     )
 }
+
 
 
 

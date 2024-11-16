@@ -1,6 +1,5 @@
 package br.edu.up.nowbarber.ui.views
 
-
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -9,42 +8,36 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import androidx.compose.ui.graphics.Color
 import br.edu.up.nowbarber.R
 import br.edu.up.nowbarber.ui.navigation.TelaRotasBottom
 import br.edu.up.nowbarber.ui.viewmodels.ClienteViewModel
-
 
 @Composable
 fun TelaLogin(
     navController: NavController,
     clienteViewModel: ClienteViewModel,
-    function: () -> Unit
+    onLoginSuccess: () -> Unit
 ) {
     val emailState = remember { mutableStateOf("") }
     val passwordState = remember { mutableStateOf("") }
-
-    // Observa o estado de login e a mensagem de erro do ViewModel
-    val loginStatus by clienteViewModel.loginStatus.observeAsState()
     val errorMessage by clienteViewModel.errorMessage.observeAsState()
 
-    // Navegação automática após login bem-sucedido
-    LaunchedEffect(loginStatus) {
-        if (loginStatus == true) {
-            navController.navigate(TelaRotasBottom.TelaInicio) {
-                popUpTo(TelaRotasBottom.TelaLogin) { inclusive = true }
-            }
-            clienteViewModel.limparLoginStatus() // Limpar status após navegação
+    // Observa o status de login
+    LaunchedEffect(clienteViewModel.loginStatus.value) {
+        if (clienteViewModel.loginStatus.value == true) {
+            onLoginSuccess() // Executa o callback para navegação
+            clienteViewModel.limparLoginStatus() // Limpa o status
         }
     }
 
+    // Tela de Login
     LoginScreen(
         email = emailState.value,
         onEmailChange = { emailState.value = it },
@@ -52,15 +45,13 @@ fun TelaLogin(
         onPasswordChange = { passwordState.value = it },
         errorMessage = errorMessage ?: "",
         onLoginClick = {
-            clienteViewModel.verificarLogin(emailState.value, passwordState.value)
+            clienteViewModel.realizarLogin(emailState.value, passwordState.value, onLoginSuccess)
         },
         onRegisterClick = {
             navController.navigate(TelaRotasBottom.TelaCadastro)
         }
     )
 }
-
-
 
 @Composable
 fun LoginScreen(
@@ -78,18 +69,18 @@ fun LoginScreen(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(padding)
-                    .background(color = Color.White)
+                    .background(Color.White)
                     .padding(16.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center
             ) {
                 Logo()
-                WelcomeText()
+                WelcomeText("Cadastre-se")
                 EmailField(email, onEmailChange)
                 Spacer(modifier = Modifier.height(16.dp))
                 PasswordField(password, onPasswordChange)
                 Spacer(modifier = Modifier.height(16.dp))
-                ErrorMessage(errorMessage)
+                ErrorMessage(errorMessage ?: "")
                 LoginButton(onLoginClick)
                 RegisterTextButton(onRegisterClick)
             }
@@ -109,7 +100,7 @@ fun Logo() {
 }
 
 @Composable
-fun WelcomeText() {
+fun WelcomeText(s: String) {
     Text(
         text = "Bem-Vindo",
         style = MaterialTheme.typography.headlineLarge,

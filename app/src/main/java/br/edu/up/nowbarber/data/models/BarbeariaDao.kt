@@ -21,5 +21,5 @@ interface BarbeariaDao {
     fun listar(): Flow<List<Barbearia>>
 
     @Query("SELECT * FROM tab_barbearia WHERE id = :id LIMIT 1")
-    suspend fun buscarPorId(id: Int): Barbearia?
+    suspend fun buscarPorId(id: kotlin.String?): Barbearia?
 }

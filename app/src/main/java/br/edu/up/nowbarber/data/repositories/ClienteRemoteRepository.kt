@@ -13,7 +13,7 @@ import kotlinx.coroutines.tasks.await
 class ClienteRemoteRepository : IRepository<Cliente> {
 
     private val firestore = FirebaseFirestore.getInstance()
-    private val clienteCollection = firestore.collection("clientes")
+    val clienteCollection = firestore.collection("clientes")
 
 
 
@@ -40,8 +40,21 @@ class ClienteRemoteRepository : IRepository<Cliente> {
     }
 
     override suspend fun verificarLogin(email: String, senha: String): Boolean {
-        TODO("Not yet implemented")
+        // Realiza a busca pelo cliente com o email fornecido
+        val querySnapshot = clienteCollection.whereEqualTo("email", email).get().await()
+
+        // Verifica se encontrou algum cliente com o e-mail informado
+        if (querySnapshot.isEmpty) {
+            return false // Retorna false se não encontrar nenhum cliente com o email
+        }
+
+        // Pega o primeiro cliente (supondo que o e-mail é único)
+        val cliente = querySnapshot.documents.first().toObject(Cliente::class.java)
+
+        // Verifica se a senha fornecida corresponde à senha do cliente
+        return cliente?.senha == senha
     }
+
 
     override suspend fun gravar(item: Cliente) {
         val docRef = clienteCollection.document(item.id.toString())

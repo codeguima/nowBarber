@@ -1,7 +1,6 @@
 package br.edu.up.nowbarber.ui.views
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
@@ -10,17 +9,29 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.res.colorResource
-import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
 import br.edu.up.nowbarber.R
 
 import br.edu.up.nowbarber.ui.components.TopAppBar
 import br.edu.up.nowbarber.ui.viewmodels.ClienteViewModel
+import br.edu.up.nowbarber.ui.viewmodels.SessionViewModel
 
 @Composable
-fun TelaMeusAcessos(state: DrawerState, usuarioId: Int) {
+fun TelaMeusAcessos(
+    state: DrawerState,
+    sessionViewModel: SessionViewModel = viewModel()
+
+) {
+
+    val usuarioId = sessionViewModel.usuarioId
+
+    // Resto da lógica da tela
+    if (usuarioId != null) {
+        // Aqui você pode usar o usuarioId
+    } else {
+        Text("Usuário não autenticado!")
+    }
+
     val viewModel: ClienteViewModel = viewModel()
     var email by remember { mutableStateOf("") }
 

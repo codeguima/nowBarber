@@ -8,8 +8,6 @@ interface IRepository<T> {
     suspend fun gravar(item: T)
     suspend fun excluir(item: T)
 
-
-    // Nova função de verificação de login
     suspend fun verificarLogin(email: String, senha: String): Boolean
 
 }

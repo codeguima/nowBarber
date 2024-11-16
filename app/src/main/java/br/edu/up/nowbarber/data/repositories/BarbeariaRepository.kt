@@ -41,6 +41,10 @@ class BarbeariaRepository(
         return barbearia
     }
 
+    override suspend fun verificarLogin(email: String, senha: String): Boolean {
+        TODO("Not yet implemented")
+    }
+
     override suspend fun gravar(item: Barbearia) {
         localRepo.gravar(item)  // Grava no banco local
         remoteRepo.gravar(item)  // Também grava no Firestore

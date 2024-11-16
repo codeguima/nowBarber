@@ -1,42 +1,53 @@
 package br.edu.up.nowbarber.data.repositories
 
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.AuthResult
+import com.google.firebase.auth.FirebaseUser
 import br.edu.up.nowbarber.data.models.Cliente
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.callbackFlow
-import kotlinx.coroutines.flow.toList
+import kotlinx.coroutines.tasks.await
 import org.mindrot.jbcrypt.BCrypt
 
 class ClienteRepository(
-
     private val remoteRepo: ClienteRemoteRepository,
     private val localRepo: ClienteLocalRepository
-
 ) : IRepository<Cliente> {
 
+    private val auth: FirebaseAuth = FirebaseAuth.getInstance()  // Instância do FirebaseAuth
 
     private fun hashSenha(senha: String): String {
         return BCrypt.hashpw(senha, BCrypt.gensalt())
     }
 
-
     private fun verificarSenha(senha: String, hash: String): Boolean {
         return BCrypt.checkpw(senha, hash)
     }
 
-    override fun listar(): Flow<List<Cliente>> = callbackFlow {
-        remoteRepo.listar().collect { clientes ->
-            clientes.forEach { cliente ->
-                localRepo.gravar(cliente)
-            }
-            trySend(clientes)
-        }
-
-        localRepo.listar().collect { localData ->
-            if (localData.isNotEmpty()) {
-                trySend(localData)
-            }
+    // Função de cadastro usando Firebase Authentication
+    suspend fun cadastrar(email: String, senha: String): FirebaseUser? {
+        return try {
+            val authResult: AuthResult = auth.createUserWithEmailAndPassword(email, senha).await()
+            authResult.user  // Retorna o usuário autenticado
+        } catch (e: Exception) {
+            null  // Retorna null em caso de erro
         }
     }
+
+    // Função de login usando Firebase Authentication
+    suspend fun login(email: String, senha: String): FirebaseUser? {
+        return try {
+            val authResult: AuthResult = auth.signInWithEmailAndPassword(email, senha).await()
+            authResult.user  // Retorna o usuário autenticado
+        } catch (e: Exception) {
+            null  // Retorna null em caso de erro
+        }
+    }
+
+    // Função de logout
+    fun logout() {
+        auth.signOut()
+    }
+
+    override fun listar() = remoteRepo.listar()
 
     override suspend fun buscarPorId(id: String?): Cliente? {
         var cliente = localRepo.buscarPorId(id)
@@ -58,12 +69,9 @@ class ClienteRepository(
         remoteRepo.excluir(item)
     }
 
-
+    // Verifica login, agora com autenticação Firebase
     override suspend fun verificarLogin(email: String, senha: String): Boolean {
-        val clientes = localRepo.listar().toList().flatten()
-        val cliente = clientes.find { it.email == email }
-        return cliente?.let { verificarSenha(senha, it.senha) } ?: false
+        val usuarioFirebase = login(email, senha)
+        return usuarioFirebase != null
     }
 }
-
-

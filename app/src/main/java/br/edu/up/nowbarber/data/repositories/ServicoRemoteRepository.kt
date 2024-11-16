@@ -37,6 +37,11 @@ class ServicoRemoteRepository : IRepository<Servico> {
         return doc.toObject(Servico::class.java)
     }
 
+
+    override suspend fun verificarLogin(email: String, senha: String): Boolean {
+        TODO("Not yet implemented")
+    }
+
     override suspend fun gravar(item: Servico) {
         val docRef = servicoCollection.document(item.id.toString())
         docRef.set(item).await()

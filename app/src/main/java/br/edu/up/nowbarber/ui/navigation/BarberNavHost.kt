@@ -9,15 +9,16 @@ import androidx.navigation.compose.composable
 import br.edu.up.nowbarber.data.models.originalBarbearias
 import br.edu.up.nowbarber.ui.viewmodels.ClienteViewModel
 import br.edu.up.nowbarber.ui.viewmodels.ServicoViewModel
+import br.edu.up.nowbarber.ui.viewmodels.SessionViewModel
 import br.edu.up.nowbarber.ui.views.*
 
 @Composable
 fun BarberNavHost(
     navController: NavHostController,
     state: DrawerState,
-    servicoViewModel: ServicoViewModel,  // ViewModel para serviços
-    clienteViewModel: ClienteViewModel,   // ViewModel para cliente
-    usuarioId: Int // Passando o usuarioId para ser usado nas telas
+    servicoViewModel: ServicoViewModel,
+    clienteViewModel: ClienteViewModel,
+    sessionViewModel: SessionViewModel // SessionViewModel gerenciando o usuário logado
 ) {
     NavHost(
         navController = navController,
@@ -30,22 +31,19 @@ fun BarberNavHost(
             TelaSearchBarber(state, navController)
         }
         composable(TelaRotasBottom.TelaAgendamento) {
-            TelaAgendamento(state)
+            TelaAgendamento(state, clienteViewModel, servicoViewModel)
         }
         composable(TelaRotasBottom.TelaSeguranca) {
-            // Passando o usuarioId e clienteViewModel para manipular dados de segurança
-            TelaSeguranca(state, clienteViewModel, usuarioId)
+            TelaSeguranca(state, clienteViewModel, sessionViewModel)
         }
         composable(TelaRotasBottom.TelaMeusAcessos) {
-            // Passando o usuarioId para tela de meus acessos
-            TelaMeusAcessos(state, usuarioId)
+            TelaMeusAcessos(state, sessionViewModel)
         }
         composable(TelaRotasBottom.TelaPayments) {
             TelaPayments(state)
         }
         composable(TelaRotasBottom.TelaAccountUser) {
-            // Passando o usuarioId para tela de conta do usuário
-            TelaAccountUser(state, usuarioId)
+            TelaAccountUser(state, sessionViewModel)
         }
         composable(TelaRotasBottom.TelaFavoritos) {
             TelaFavoritos(state)
@@ -60,12 +58,17 @@ fun BarberNavHost(
             }
         }
         composable(TelaRotasBottom.TelaLogin) {
-            TelaLogin(navController, clienteViewModel) {
-                navController.navigate(TelaRotasBottom.TelaInicio) {
-                    popUpTo(TelaRotasBottom.TelaLogin) { inclusive = true }
+            TelaLogin(
+                navController = navController,
+                clienteViewModel = clienteViewModel,
+                onLoginSuccess = {
+                    navController.navigate(TelaRotasBottom.TelaInicio) {
+                        popUpTo(TelaRotasBottom.TelaLogin) { inclusive = true }
+                    }
                 }
-            }
+            )
         }
+
         composable(TelaRotasBottom.TelaCadastro) {
             TelaCadastro(navController, clienteViewModel) {
                 navController.navigate(TelaRotasBottom.TelaLogin) {

@@ -37,11 +37,10 @@ class ServicoRepository (
             return servico
         }
 
-
-
     override suspend fun verificarLogin(email: String, senha: String): Boolean {
         TODO("Not yet implemented")
     }
+
 
     override suspend fun gravar(servico: Servico) {
 

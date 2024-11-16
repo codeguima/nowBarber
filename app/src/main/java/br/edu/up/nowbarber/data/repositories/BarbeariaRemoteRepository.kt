@@ -29,6 +29,10 @@ class BarbeariaRemoteRepository : IRepository<Barbearia> {
         return doc.toObject(Barbearia::class.java)
     }
 
+    override suspend fun verificarLogin(email: String, senha: String): Boolean {
+        TODO("Not yet implemented")
+    }
+
     override suspend fun gravar(item: Barbearia) {
         val docRef = collection.document(item.id.toString())
         docRef.set(item).await()

@@ -10,6 +10,7 @@ class ServicoLocalRepository(
 
     override fun listar(): Flow<List<Servico>> = dao.listar()
     override suspend fun buscarPorId(id: String?): Servico? = dao.buscarPorId(id)
+
     override suspend fun gravar(item: Servico) = dao.gravar(item)
     override suspend fun excluir(item: Servico) = dao.excluir(item)
 

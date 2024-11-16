@@ -1,22 +1,18 @@
 package br.edu.up.nowbarber.ui.views
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.colorResource
-import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import br.edu.up.nowbarber.R
-import br.edu.up.nowbarber.data.models.Cliente
 import br.edu.up.nowbarber.ui.viewmodels.ClienteViewModel
+
+
 
 
 @Composable
@@ -25,12 +21,20 @@ fun TelaCadastro(
     clienteViewModel: ClienteViewModel,
     function: () -> Unit
 ) {
-    // Variáveis de estado para armazenar nome, telefone, email, senha e a mensagem de erro
-    var name by remember { mutableStateOf("") }
-    var phone by remember { mutableStateOf("") }
-    var email by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
-    var errorMessage by remember { mutableStateOf("") }
+    // Estados do formulário
+    val emailState = remember { mutableStateOf("") }
+    val passwordState = remember { mutableStateOf("") }
+    val errorMessage by clienteViewModel.errorMessage.observeAsState()
+
+    // Observa mudanças no status de login para navegação após cadastro
+    val loginStatus by clienteViewModel.loginStatus.observeAsState()
+
+    LaunchedEffect(loginStatus) {
+        if (loginStatus == true) {
+            navController.popBackStack() // Retorna para a tela anterior
+            clienteViewModel.limparLoginStatus() // Limpa status de login
+        }
+    }
 
     Scaffold(
         content = { padding ->
@@ -38,128 +42,76 @@ fun TelaCadastro(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(padding)
-                    .background(color = Color.White)
+                    .background(Color.White)
                     .padding(16.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center
             ) {
-                // Logotipo no topo
-                Image(
-                    painter = painterResource(id = R.drawable.logo3),
-                    contentDescription = "Logotipo",
-                    modifier = Modifier
-                        .size(200.dp)
-                        .padding(bottom = 16.dp)
-                )
-
-                // Título
-                Text(
-                    text = "Criar Conta",
-                    style = MaterialTheme.typography.headlineLarge,
-                    modifier = Modifier.padding(bottom = 16.dp)
-                )
-
-                // Campo de Nome
-                OutlinedTextField(
-                    value = name,
-                    onValueChange = { name = it },
-                    label = { Text("Nome") },
-                    modifier = Modifier.fillMaxWidth()
-                )
-
-                Spacer(modifier = Modifier.height(16.dp))
-
-                // Campo de Telefone
-                OutlinedTextField(
-                    value = phone,
-                    onValueChange = { phone = it },
-                    label = { Text("Telefone") },
-                    modifier = Modifier.fillMaxWidth()
-                )
-
-                Spacer(modifier = Modifier.height(16.dp))
-
-                // Campo de Email
-                OutlinedTextField(
-                    value = email,
-                    onValueChange = { email = it },
-                    label = { Text("Email") },
-                    modifier = Modifier.fillMaxWidth()
-                )
-
-                Spacer(modifier = Modifier.height(16.dp))
-
-                // Campo de Senha
-                OutlinedTextField(
-                    value = password,
-                    onValueChange = { password = it },
-                    label = { Text("Senha") },
-                    visualTransformation = PasswordVisualTransformation(),
-                    modifier = Modifier.fillMaxWidth()
-                )
-
-                Spacer(modifier = Modifier.height(16.dp))
-
-                // Exibir mensagem de erro, se houver
-                if (errorMessage.isNotEmpty()) {
-                    Text(
-                        text = errorMessage,
-                        color = MaterialTheme.colorScheme.error,
-                        style = MaterialTheme.typography.bodyMedium,
-                        modifier = Modifier.padding(bottom = 16.dp)
-                    )
-                }
-
-                // Botão de Cadastro
-                Button(
-                    onClick = {
-                        // Validação dos campos obrigatórios
-                        if (name.isNotEmpty() && phone.isNotEmpty() && email.isNotEmpty() && password.isNotEmpty()) {
-                            errorMessage = "" // Limpa a mensagem de erro
-                            val cliente = Cliente(
-                                nome = name,
-                                telefone = phone,
-                                email = email,
-                                senha = password,
-                                dataNascimento = "",  // Nascimento pode ser deixado em branco
-                                genero = ""  // Gênero pode ser deixado em branco
-                            )
-                            // Chama a função de salvar o cliente
-                            clienteViewModel.gravar(cliente)
-                            navController.navigate("login") { // Redireciona para a tela de login
-                                popUpTo("cadastro") { inclusive = true }
-                            }
-                        } else {
-                            errorMessage = "Preencha todos os campos obrigatórios!" // Exibe mensagem de erro
-                        }
-                    },
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = colorResource(id = R.color.principal),
-                        contentColor = Color.White
-                    ),
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Text("Cadastrar")
-                }
-
-                Spacer(modifier = Modifier.height(16.dp))
-
-                // Botão de Voltar
-                TextButton(
-                    onClick = {
-                        navController.navigate("login") {
-                            popUpTo("cadastro") { inclusive = true }
-                        }
+                TelaCadastroContent(
+                    email = emailState.value,
+                    onEmailChange = { emailState.value = it },
+                    password = passwordState.value,
+                    onPasswordChange = { passwordState.value = it },
+                    errorMessage = errorMessage ?: "",
+                    onRegisterClick = {
+                        clienteViewModel.cadastrarUsuario(emailState.value, passwordState.value)
                     }
-                ) {
-                    Text(
-                        color = Color.Blue,
-                        text = "Já tem uma conta? Faça login",
-                        fontSize = 12.sp,
-                        modifier = Modifier.padding(16.dp)
-                    )
-                }
+                )
             }
         }
     )
+}
+
+@Composable
+fun TelaCadastroContent(
+    email: String,
+    onEmailChange: (String) -> Unit,
+    password: String,
+    onPasswordChange: (String) -> Unit,
+    errorMessage: String,
+    onRegisterClick: () -> Unit
+) {
+    Logo()
+    WelcomeText("Cadastre-se")
+    Spacer(modifier = Modifier.height(16.dp))
+    EmailField(email, onEmailChange)
+    Spacer(modifier = Modifier.height(16.dp))
+    PasswordField(password, onPasswordChange)
+    Spacer(modifier = Modifier.height(16.dp))
+    ErrorMessage(errorMessage)
+    Spacer(modifier = Modifier.height(16.dp))
+    RegisterButton(onRegisterClick)
+    Spacer(modifier = Modifier.height(16.dp))
+    BackToLoginTextButton()
+}
+
+@Composable
+fun RegisterButton(onRegisterClick: () -> Unit) {
+    Button(
+        onClick = onRegisterClick,
+        colors = ButtonDefaults.buttonColors(
+            containerColor = MaterialTheme.colorScheme.primary,
+            contentColor = Color.White
+        ),
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(48.dp) // Altura padrão para botões
+    ) {
+        Text(
+            text = "Cadastrar",
+            style = MaterialTheme.typography.bodyLarge
+        )
+    }
+}
+
+
+@Composable
+fun BackToLoginTextButton() {
+    TextButton(onClick = { /* Navegar para a tela de login */ }) {
+        Text(
+            text = "Já possui uma conta? Faça login",
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.primary
+        )
+    }
 }

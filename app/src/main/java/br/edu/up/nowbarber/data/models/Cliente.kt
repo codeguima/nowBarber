@@ -6,13 +6,14 @@ import androidx.room.PrimaryKey
 @Entity(tableName = "tab_cliente")
 data class Cliente(
     @PrimaryKey(autoGenerate = true)
-    var id: Int? = null,
-    val nome: String,
-    val telefone: String,
-    val dataNascimento: String,
-    val genero: String,
-    val email: String,
-    val senha: String
-
-)
-
+    var id: Long? = null,
+    var nome: String = "",
+    var telefone: String = "",
+    var email: String = "",
+    var senha: String = "",
+    var dataNascimento: String = "",
+    var genero: String = ""
+) {
+    // Construtor sem parâmetros, necessário para o Firebase e Room
+    constructor() : this(0, "", "", "", "", "", "")
+}

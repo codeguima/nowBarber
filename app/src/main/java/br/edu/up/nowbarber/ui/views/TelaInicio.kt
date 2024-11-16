@@ -17,6 +17,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import br.edu.up.nowbarber.R
+import br.edu.up.nowbarber.data.models.Servico
 import br.edu.up.nowbarber.ui.components.TopAppBar
 
 @Composable

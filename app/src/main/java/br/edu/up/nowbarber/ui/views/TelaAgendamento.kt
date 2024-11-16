@@ -16,14 +16,36 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import br.edu.up.nowbarber.R
 import br.edu.up.nowbarber.data.models.Servico
 import br.edu.up.nowbarber.ui.components.TopAppBar
+import br.edu.up.nowbarber.ui.viewmodels.ClienteViewModel
+import br.edu.up.nowbarber.ui.viewmodels.ServicoViewModel
+import br.edu.up.nowbarber.ui.viewmodels.SessionViewModel
 import java.text.SimpleDateFormat
 import java.util.*
 
 @Composable
-fun TelaAgendamento(state: DrawerState) {
+fun TelaAgendamento(
+    state: DrawerState,
+    clienteViewModel: ClienteViewModel,
+    servicoViewModel: ServicoViewModel,
+    sessionViewModel: SessionViewModel = viewModel()
+
+) {
+
+    // Obtendo o ID do usuário logado
+    val usuarioId = sessionViewModel.usuarioId
+
+    // Resto da lógica da tela
+    if (usuarioId != null) {
+        // Aqui você pode usar o usuarioId
+    } else {
+        Text("Usuário não autenticado!")
+    }
+
+
     // Lista de agendamentos inicial com valores de exemplo
     val agendamentos = remember {
         mutableStateListOf(

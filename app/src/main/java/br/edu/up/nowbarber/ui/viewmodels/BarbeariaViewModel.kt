@@ -40,7 +40,7 @@ class BarbeariaViewModel(
 
 
     suspend fun buscarBarbeariaPorId(barbeariaId: Int): Barbearia? {
-        return repository.buscarPorId(barbeariaId)
+        return repository.buscarPorId(barbeariaId.toString())
     }
 
     fun gravarBarbearia(barbearia: Barbearia) {

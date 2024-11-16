@@ -15,7 +15,7 @@ interface ServicoDao {
     fun listar(): Flow<List<Servico>>
 
     @Query("select * from tab_servico where id = :idx")
-    suspend fun buscarPorId(idx: Int): Servico
+    suspend fun buscarPorId(idx: String?): Servico
 
     //@Update @Insert
     @Upsert
