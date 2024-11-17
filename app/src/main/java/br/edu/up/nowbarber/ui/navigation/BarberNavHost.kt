@@ -34,7 +34,7 @@ fun BarberNavHost(
             TelaAgendamento(state, clienteViewModel, servicoViewModel)
         }
         composable(TelaRotasBottom.TelaSeguranca) {
-            TelaSeguranca(state, clienteViewModel, sessionViewModel)
+            TelaSeguranca(state, sessionViewModel)
         }
         composable(TelaRotasBottom.TelaMeusAcessos) {
             TelaMeusAcessos(state, sessionViewModel)
@@ -43,11 +43,12 @@ fun BarberNavHost(
             TelaPayments(state)
         }
         composable(TelaRotasBottom.TelaAccountUser) {
-            TelaAccountUser(state, sessionViewModel)
+            TelaAccountUser(state, sessionViewModel,clienteViewModel)
         }
         composable(TelaRotasBottom.TelaFavoritos) {
             TelaFavoritos(state)
         }
+
         composable(TelaRotasBottom.TelaDetalhesBarbearia + "/{barbeariaNome}") { backStackEntry ->
             val barbeiroNome = backStackEntry.arguments?.getString("barbeariaNome")
             val barbeiro = originalBarbearias.find { it.name == barbeiroNome }
@@ -58,10 +59,7 @@ fun BarberNavHost(
             }
         }
         composable(TelaRotasBottom.TelaLogin) {
-            TelaLogin(
-                navController = navController,
-                clienteViewModel = clienteViewModel,
-                onLoginSuccess = {
+            TelaLogin(navController, sessionViewModel, onLoginSuccess = {
                     navController.navigate(TelaRotasBottom.TelaInicio) {
                         popUpTo(TelaRotasBottom.TelaLogin) { inclusive = true }
                     }
@@ -69,10 +67,12 @@ fun BarberNavHost(
             )
         }
 
-        composable(TelaRotasBottom.TelaCadastro) {
-            TelaCadastro(navController, clienteViewModel) {
+
+
+        composable(TelaRotasBottom.TelaCadastroLogin) {
+            TelaCadastroLogin(navController, sessionViewModel) {
                 navController.navigate(TelaRotasBottom.TelaLogin) {
-                    popUpTo(TelaRotasBottom.TelaCadastro) { inclusive = true }
+                    popUpTo(TelaRotasBottom.TelaCadastroLogin) { inclusive = true }
                 }
             }
         }

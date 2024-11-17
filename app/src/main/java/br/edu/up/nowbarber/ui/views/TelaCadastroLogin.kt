@@ -10,31 +10,34 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import br.edu.up.nowbarber.ui.viewmodels.ClienteViewModel
-
-
+import br.edu.up.nowbarber.ui.navigation.TelaRotasBottom
+import br.edu.up.nowbarber.ui.viewmodels.SessionViewModel
 
 
 @Composable
-fun TelaCadastro(
+fun TelaCadastroLogin(
     navController: NavController,
-    clienteViewModel: ClienteViewModel,
+    sessionViewModel: SessionViewModel,
     function: () -> Unit
 ) {
     // Estados do formulário
     val emailState = remember { mutableStateOf("") }
     val passwordState = remember { mutableStateOf("") }
-    val errorMessage by clienteViewModel.errorMessage.observeAsState()
+    val errorMessage by sessionViewModel.errorMessage.observeAsState()
 
     // Observa mudanças no status de login para navegação após cadastro
-    val loginStatus by clienteViewModel.loginStatus.observeAsState()
+    val loginStatus by sessionViewModel.loginStatus.observeAsState()
 
     LaunchedEffect(loginStatus) {
         if (loginStatus == true) {
-            navController.popBackStack() // Retorna para a tela anterior
-            clienteViewModel.limparLoginStatus() // Limpa status de login
+            navController.navigate(TelaRotasBottom.TelaCadastroCliente) {
+                // Se necessário, defina o popUpTo para não permitir voltar
+                popUpTo(TelaRotasBottom.TelaCadastroLogin) { inclusive = true }
+            }
+            sessionViewModel.limparLoginStatus()
         }
     }
+
 
     Scaffold(
         content = { padding ->
@@ -54,7 +57,10 @@ fun TelaCadastro(
                     onPasswordChange = { passwordState.value = it },
                     errorMessage = errorMessage ?: "",
                     onRegisterClick = {
-                        clienteViewModel.cadastrarUsuario(emailState.value, passwordState.value)
+                        sessionViewModel.cadastrarUsuario(emailState.value, passwordState.value)
+                    },
+                    onLoginClick = {
+                        navController.navigate(TelaRotasBottom.TelaLogin)
                     }
                 )
             }
@@ -69,6 +75,7 @@ fun TelaCadastroContent(
     password: String,
     onPasswordChange: (String) -> Unit,
     errorMessage: String,
+    onLoginClick: () -> Unit,
     onRegisterClick: () -> Unit
 ) {
     Logo()
@@ -82,7 +89,7 @@ fun TelaCadastroContent(
     Spacer(modifier = Modifier.height(16.dp))
     RegisterButton(onRegisterClick)
     Spacer(modifier = Modifier.height(16.dp))
-    BackToLoginTextButton()
+    BackToLoginTextButton(onLoginClick)
 }
 
 @Composable
@@ -106,8 +113,10 @@ fun RegisterButton(onRegisterClick: () -> Unit) {
 
 
 @Composable
-fun BackToLoginTextButton() {
-    TextButton(onClick = { /* Navegar para a tela de login */ }) {
+fun BackToLoginTextButton(onLoginClick: () -> Unit) {
+    TextButton(
+        onClick = onLoginClick
+    ) {
         Text(
             text = "Já possui uma conta? Faça login",
             style = MaterialTheme.typography.bodyMedium,

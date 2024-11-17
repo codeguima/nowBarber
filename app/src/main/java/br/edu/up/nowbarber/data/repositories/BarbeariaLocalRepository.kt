@@ -11,11 +11,7 @@ class BarbeariaLocalRepository(
 ) : IRepository<Barbearia> {
 
     override fun listar(): Flow<List<Barbearia>> = dao.listar()
-    override suspend fun buscarPorId(id: String?): Barbearia? = dao.buscarPorId(id)
-    override suspend fun verificarLogin(email: String, senha: String): Boolean {
-        TODO("Not yet implemented")
-    }
-
+    override suspend fun buscarPorId(id: String): Barbearia? = dao.buscarPorId(id.toString())
     override suspend fun gravar(item: Barbearia) = dao.gravar(item)
     override suspend fun excluir(item: Barbearia) = dao.excluir(item)
 }

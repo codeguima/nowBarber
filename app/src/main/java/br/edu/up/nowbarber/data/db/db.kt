@@ -21,7 +21,7 @@ import br.edu.up.nowbarber.data.models.Servico
         Cliente::class,
         // Adicione novas entidades aqui conforme necessário
     ],
-    version = 1,
+    version = 2,
     exportSchema = false
 )
 abstract class AppDatabase : RoomDatabase() {

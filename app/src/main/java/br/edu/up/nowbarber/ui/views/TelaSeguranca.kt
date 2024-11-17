@@ -6,6 +6,7 @@ import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -17,52 +18,53 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import br.edu.up.nowbarber.R
 import br.edu.up.nowbarber.ui.components.TopAppBar
-import br.edu.up.nowbarber.ui.viewmodels.ClienteViewModel
+
 import br.edu.up.nowbarber.ui.viewmodels.SessionViewModel
 
 
 @Composable
 fun TelaSeguranca(
     state: DrawerState,
-    clienteViewModel: ClienteViewModel,
     sessionViewModel: SessionViewModel = viewModel()
-
 ) {
-
     // Obtendo o ID do usuário logado
-    val usuarioId = sessionViewModel.usuarioId
+    var usuarioId = sessionViewModel.usuarioId.collectAsState().value
 
-    // Resto da lógica da tela
-    if (usuarioId != null) {
-        // Aqui você pode usar o usuarioId
-    } else {
-        Text("Usuário não autenticado!")
-    }
-
-
-    val viewModel: ClienteViewModel = viewModel()
+    // Variáveis locais para senhas
     var senhaAtual by remember { mutableStateOf("") }
     var novaSenha by remember { mutableStateOf("") }
     var confirmarSenha by remember { mutableStateOf("") }
     var senhaVisivel by remember { mutableStateOf(false) }
 
-    // Usando LaunchedEffect para carregar as configurações de segurança
-    LaunchedEffect(usuarioId) {
-        usuarioId?.let {
-            // Buscar as configurações de segurança do usuário de forma assíncrona
-            val configuracoesSeguranca = viewModel.buscarPorId(usuarioId)
-            configuracoesSeguranca?.let {
-                // Carregar as informações da configuração de segurança
-                senhaAtual = it.senha
-            }
-        }
-    }
+    // Observe as mensagens de erro
+    val errorMessage by sessionViewModel.errorMessage.observeAsState()
 
+    // Scaffold para a tela com o formulário de segurança
     Scaffold(
         topBar = { TopAppBar(state) },
-        content = { p -> ConteudoTelaSeguranca(Modifier.padding(p), senhaAtual, novaSenha, confirmarSenha, senhaVisivel) }
+        content = { p ->
+            errorMessage?.let {
+                ConteudoTelaSeguranca(
+                    modifier = Modifier.padding(p),
+                    senhaAtual = senhaAtual,
+                    novaSenha = novaSenha,
+                    confirmarSenha = confirmarSenha,
+                    senhaVisivel = senhaVisivel,
+                    onSaveClick = {
+                        if (novaSenha == confirmarSenha) {
+                            sessionViewModel.atualizarSenha(senhaAtual, novaSenha)
+                        } else {
+                            sessionViewModel.setErrorMessage("As senhas não coincidem!")
+                        }
+                    },
+                    it
+                )
+            }
+        }
     )
 }
+
+
 
 @Composable
 fun ConteudoTelaSeguranca(
@@ -70,7 +72,9 @@ fun ConteudoTelaSeguranca(
     senhaAtual: String,
     novaSenha: String,
     confirmarSenha: String,
-    senhaVisivel: Boolean
+    senhaVisivel: Boolean,
+    onSaveClick: () -> Unit,
+    errorMessage: String
 ) {
     Column(
         modifier = modifier
@@ -84,7 +88,7 @@ fun ConteudoTelaSeguranca(
         // Campos de senha
         OutlinedTextField(
             value = senhaAtual,
-            onValueChange = { /* Atualizar senha atual */ },
+            onValueChange = { senhaAtual != it },
             label = { Text("Senha atual") },
             visualTransformation = if (senhaVisivel) VisualTransformation.None else PasswordVisualTransformation(),
             trailingIcon = {
@@ -100,7 +104,7 @@ fun ConteudoTelaSeguranca(
 
         OutlinedTextField(
             value = novaSenha,
-            onValueChange = { /* Atualizar nova senha */ },
+            onValueChange = { novaSenha != it },
             label = { Text("Nova senha") },
             visualTransformation = if (senhaVisivel) VisualTransformation.None else PasswordVisualTransformation(),
             trailingIcon = {
@@ -116,7 +120,7 @@ fun ConteudoTelaSeguranca(
 
         OutlinedTextField(
             value = confirmarSenha,
-            onValueChange = { /* Atualizar confirmar senha */ },
+            onValueChange = { confirmarSenha != it },
             label = { Text("Confirmar nova senha") },
             visualTransformation = if (senhaVisivel) VisualTransformation.None else PasswordVisualTransformation(),
             trailingIcon = {
@@ -130,8 +134,17 @@ fun ConteudoTelaSeguranca(
                 .padding(bottom = 32.dp)
         )
 
+        if (errorMessage.isNotEmpty()) {
+            Text(
+                text = errorMessage,
+                color = Color.Red,
+                style = MaterialTheme.typography.bodyMedium,
+                modifier = Modifier.padding(bottom = 16.dp)
+            )
+        }
+
         Button(
-            onClick = { /* Lógica para salvar as senhas */ },
+            onClick = onSaveClick,
             colors = ButtonDefaults.buttonColors(
                 containerColor = colorResource(id = R.color.principal),
                 contentColor = Color.White

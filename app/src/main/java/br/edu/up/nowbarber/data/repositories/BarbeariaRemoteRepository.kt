@@ -24,13 +24,9 @@ class BarbeariaRemoteRepository : IRepository<Barbearia> {
         awaitClose { listener.remove() }
     }
 
-    override suspend fun buscarPorId(id: String?): Barbearia? {
+    override suspend fun buscarPorId(id: String): Barbearia? {
         val doc = collection.document(id.toString()).get().await()
         return doc.toObject(Barbearia::class.java)
-    }
-
-    override suspend fun verificarLogin(email: String, senha: String): Boolean {
-        TODO("Not yet implemented")
     }
 
     override suspend fun gravar(item: Barbearia) {

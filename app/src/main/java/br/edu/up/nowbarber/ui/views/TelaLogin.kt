@@ -9,46 +9,58 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import br.edu.up.nowbarber.R
+import br.edu.up.nowbarber.data.models.Cliente
+import br.edu.up.nowbarber.data.repositories.ClienteRepository
+import br.edu.up.nowbarber.data.repositories.IRepository
 import br.edu.up.nowbarber.ui.navigation.TelaRotasBottom
 import br.edu.up.nowbarber.ui.viewmodels.ClienteViewModel
+import br.edu.up.nowbarber.ui.viewmodels.SessionViewModel
 
 @Composable
 fun TelaLogin(
     navController: NavController,
-    clienteViewModel: ClienteViewModel,
+    sessionViewModel: SessionViewModel,
     onLoginSuccess: () -> Unit
 ) {
+
+
     val emailState = remember { mutableStateOf("") }
     val passwordState = remember { mutableStateOf("") }
-    val errorMessage by clienteViewModel.errorMessage.observeAsState()
+    val errorMessage by sessionViewModel.errorMessage.observeAsState("")
+    val loginStatus by sessionViewModel.loginStatus.observeAsState()
 
-    // Observa o status de login
-    LaunchedEffect(clienteViewModel.loginStatus.value) {
-        if (clienteViewModel.loginStatus.value == true) {
-            onLoginSuccess() // Executa o callback para navegação
-            clienteViewModel.limparLoginStatus() // Limpa o status
+
+    // Monitora o status de login e executa a ação de sucesso
+    LaunchedEffect(loginStatus) {
+        if (loginStatus == true) {
+            onLoginSuccess()
+            sessionViewModel.limparLoginStatus()
         }
     }
 
-    // Tela de Login
+    // Tela de login principal
     LoginScreen(
         email = emailState.value,
         onEmailChange = { emailState.value = it },
         password = passwordState.value,
         onPasswordChange = { passwordState.value = it },
-        errorMessage = errorMessage ?: "",
+        errorMessage = errorMessage,
         onLoginClick = {
-            clienteViewModel.realizarLogin(emailState.value, passwordState.value, onLoginSuccess)
+            sessionViewModel.realizarLogin(
+                email = emailState.value,
+                senha = passwordState.value,
+                onLoginSuccess = onLoginSuccess
+            )
         },
         onRegisterClick = {
-            navController.navigate(TelaRotasBottom.TelaCadastro)
+            navController.navigate(TelaRotasBottom.TelaCadastroLogin)
         }
     )
 }
@@ -63,29 +75,29 @@ fun LoginScreen(
     onLoginClick: () -> Unit,
     onRegisterClick: () -> Unit
 ) {
-    Scaffold(
-        content = { padding ->
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(padding)
-                    .background(Color.White)
-                    .padding(16.dp),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center
-            ) {
-                Logo()
-                WelcomeText("Cadastre-se")
-                EmailField(email, onEmailChange)
-                Spacer(modifier = Modifier.height(16.dp))
-                PasswordField(password, onPasswordChange)
-                Spacer(modifier = Modifier.height(16.dp))
-                ErrorMessage(errorMessage ?: "")
-                LoginButton(onLoginClick)
-                RegisterTextButton(onRegisterClick)
-            }
+    Scaffold { padding ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(padding)
+                .background(Color.White)
+                .padding(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            Logo()
+            WelcomeText("Cadastre-se")
+            Spacer(modifier = Modifier.height(16.dp))
+            EmailField(email, onEmailChange)
+            Spacer(modifier = Modifier.height(16.dp))
+            PasswordField(password, onPasswordChange)
+            Spacer(modifier = Modifier.height(16.dp))
+            ErrorMessage(errorMessage)
+            Spacer(modifier = Modifier.height(16.dp))
+            LoginButton(onLoginClick)
+            RegisterTextButton(onRegisterClick)
         }
-    )
+    }
 }
 
 @Composable
@@ -145,25 +157,22 @@ fun ErrorMessage(errorMessage: String) {
 fun LoginButton(onLoginClick: () -> Unit) {
     Button(
         onClick = onLoginClick,
-        colors = ButtonDefaults.buttonColors(
-            containerColor = colorResource(id = R.color.principal),
-            contentColor = Color.White
-        ),
         modifier = Modifier.fillMaxWidth()
     ) {
-        Text("Entre")
+        Text("Entrar")
     }
 }
 
 @Composable
 fun RegisterTextButton(onRegisterClick: () -> Unit) {
-    Spacer(modifier = Modifier.height(16.dp))
-    TextButton(onClick = onRegisterClick) {
+    TextButton(
+        onClick = onRegisterClick,
+        modifier = Modifier.fillMaxWidth()
+    ) {
         Text(
-            color = Color.Blue,
             text = "Cadastre-se",
-            fontSize = 12.sp,
-            modifier = Modifier.padding(16.dp)
+            color = Color.Blue,
+            fontSize = 12.sp
         )
     }
 }

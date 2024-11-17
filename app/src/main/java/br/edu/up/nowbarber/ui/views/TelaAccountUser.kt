@@ -11,6 +11,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import androidx.lifecycle.viewmodel.compose.viewModel
 import br.edu.up.nowbarber.R
+import br.edu.up.nowbarber.data.models.Cliente
 import br.edu.up.nowbarber.ui.components.TopAppBar
 import br.edu.up.nowbarber.ui.viewmodels.ClienteViewModel
 import br.edu.up.nowbarber.ui.viewmodels.SessionViewModel
@@ -19,53 +20,104 @@ import br.edu.up.nowbarber.ui.viewmodels.SessionViewModel
 @Composable
 fun TelaAccountUser(
     state: DrawerState,
-    sessionViewModel: SessionViewModel = viewModel()
-
+    sessionViewModel: SessionViewModel = viewModel(),
+    clienteViewModel: ClienteViewModel = viewModel()
 ) {
-    // Obtendo o ID do usuário logado
-    val usuarioId = sessionViewModel.usuarioId
 
-    // Resto da lógica da tela
-    if (usuarioId != null) {
-        // Aqui você pode usar o usuarioId
-    } else {
-        Text("Usuário não autenticado!")
-    }
+    val usuarioId by sessionViewModel.usuarioId.collectAsState()
 
-    val viewModel: ClienteViewModel = viewModel() // Supondo que o ViewModel seja UserViewModel
-    var nomeCompleto by remember { mutableStateOf("") }
-    var celular by remember { mutableStateOf("") }
-    var dataNascimento by remember { mutableStateOf("") }
-    var genero by remember { mutableStateOf("") }
 
-    // Usando LaunchedEffect para carregar os dados do usuário quando o usuarioId mudar
+    var cliente by remember { mutableStateOf<Cliente?>(null) }
+    var isLoading by remember { mutableStateOf(true) }
+
     LaunchedEffect(usuarioId) {
-        usuarioId?.let {
-            // Buscar os dados do usuário de forma assíncrona
-            val usuario = viewModel.buscarPorId(usuarioId)
-            usuario?.let {
-                nomeCompleto = it.nome
-                celular = it.telefone
-                dataNascimento = it.dataNascimento
-                genero = it.genero
-            }
-        }
+        isLoading = true
+        cliente = clienteViewModel.buscarPorId(usuarioId.toString())
+        isLoading = false
     }
 
     Scaffold(
         topBar = { TopAppBar(state) },
-        content = { p -> ConteudoAccountUser(Modifier.padding(p), nomeCompleto, celular, dataNascimento, genero) }
+        content = { padding ->
+            when {
+                isLoading -> LoadingScreen()
+                cliente == null -> UsuarioNaoAutenticadoScreen()
+                else -> {
+                    if (isCadastroCompleto(cliente)) {
+                        TelaDadosCliente(
+                            modifier = Modifier.padding(padding),
+                            cliente = cliente!!,
+                            onSaveClick = { clienteViewModel.gravar(it) }
+                        )
+                    } else {
+                        TelaCadastroIncompleto(
+                            modifier = Modifier.padding(padding),
+                            cliente = cliente!!,
+                            onSaveClick = { clienteViewModel.gravar(it) }
+                        )
+                    }
+                }
+            }
+        }
     )
 }
 
+
 @Composable
-fun ConteudoAccountUser(
-    modifier: Modifier,
-    nomeCompleto: String,
-    celular: String,
-    dataNascimento: String,
-    genero: String
+fun LoadingScreen() {
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ) {
+        CircularProgressIndicator()
+    }
+}
+
+@Composable
+fun UsuarioNaoAutenticadoScreen() {
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ) {
+        Text("Usuário não autenticado!")
+    }
+}
+
+fun isCadastroCompleto(cliente: Cliente?): Boolean {
+    return !cliente?.nome.isNullOrEmpty() &&
+            !cliente?.telefone.isNullOrEmpty() &&
+            !cliente?.dataNascimento.isNullOrEmpty() &&
+            !cliente?.genero.isNullOrEmpty()
+}
+
+
+@Composable
+fun TelaCadastroIncompleto(
+    modifier: Modifier = Modifier,
+    cliente: Cliente,
+    onSaveClick: (Cliente) -> Unit
 ) {
+    TelaDadosCliente(
+        modifier = modifier,
+        cliente = cliente,
+        onSaveClick = onSaveClick,
+        titulo = "Complete seu Cadastro"
+    )
+}
+
+
+@Composable
+fun TelaDadosCliente(
+    modifier: Modifier = Modifier,
+    cliente: Cliente,
+    onSaveClick: (Cliente) -> Unit,
+    titulo: String = "Minha Conta"
+) {
+    var nome by remember { mutableStateOf(cliente.nome) }
+    var celular by remember { mutableStateOf(cliente.telefone) }
+    var dataNascimento by remember { mutableStateOf(cliente.dataNascimento) }
+    var genero by remember { mutableStateOf(cliente.genero) }
+
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -73,59 +125,58 @@ fun ConteudoAccountUser(
         verticalArrangement = Arrangement.spacedBy(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text(text = "Minhas Conta", fontSize = 20.sp)
+        Text(text = titulo, fontSize = 20.sp)
 
-        // Campos para exibir e editar os dados do usuário
+        // Campos de entrada
         OutlinedTextField(
-            value = nomeCompleto,
-            onValueChange = { /* Atualizar o nome */ },
+            value = nome,
+            onValueChange = { nome = it },
             label = { Text("Nome Completo") },
             modifier = Modifier.fillMaxWidth()
         )
         OutlinedTextField(
             value = celular,
-            onValueChange = { /* Atualizar o celular */ },
+            onValueChange = { celular = it },
             label = { Text("Celular") },
             modifier = Modifier.fillMaxWidth()
         )
         OutlinedTextField(
             value = dataNascimento,
-            onValueChange = { /* Atualizar a data de nascimento */ },
+            onValueChange = { dataNascimento = it },
             label = { Text("Data de Nascimento") },
             modifier = Modifier.fillMaxWidth()
         )
+
         // Gênero
-        Text(text = "Gênero", fontSize = 18.sp, modifier = Modifier.padding(vertical = 8.dp))
+        Text(text = "Gênero", fontSize = 18.sp)
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceEvenly
         ) {
-            GenderButton(
-                gender = "Masculino",
-                selectedGender = genero,
-                onClick = { genero != "Masculino" }
-            )
-            GenderButton(
-                gender = "Feminino",
-                selectedGender = genero,
-                onClick = { genero != "Feminino" }
-            )
-            GenderButton(
-                gender = "Outro",
-                selectedGender = genero,
-                onClick = { genero != "Outro" }
-            )
+            GenderButton("Masculino", genero) { genero = "Masculino" }
+            GenderButton("Feminino", genero) { genero = "Feminino" }
+            GenderButton("Outro", genero) { genero = "Outro" }
         }
-        // Botão Salvar
+
+        // Botão de salvar
         Button(
-            onClick = { /* Implementar ação de salvar */ },
+            onClick = {
+                onSaveClick(
+                    cliente.copy(
+                        nome = nome,
+                        telefone = celular,
+                        dataNascimento = dataNascimento,
+                        genero = genero
+                    )
+                )
+            },
             colors = ButtonDefaults.buttonColors(
-                containerColor = colorResource(id = R.color.principal), // Cor de fundo do botão
-                contentColor = Color.White // Cor do texto do botão
+                containerColor = colorResource(id = R.color.principal),
+                contentColor = Color.White
             ),
             modifier = Modifier.fillMaxWidth()
         ) {
-            Text(text = "Salvar")
+            Text("Salvar")
         }
     }
 }

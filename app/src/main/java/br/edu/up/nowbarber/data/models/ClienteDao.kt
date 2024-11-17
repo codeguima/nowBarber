@@ -15,7 +15,9 @@ interface ClienteDao {
     fun listar(): Flow<List<Cliente>>
 
     @Query("select * from tab_cliente where id = :idx")
-    suspend fun buscarPorId(idx: kotlin.String?): Cliente
+    suspend fun buscarPorId(idx: String?): Cliente
+
+
 
     @Query("select * from tab_cliente where email = :email")
     suspend fun buscarPorEmail(email: String): Cliente?

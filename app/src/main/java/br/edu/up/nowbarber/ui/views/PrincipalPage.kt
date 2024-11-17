@@ -54,6 +54,11 @@ fun PrincipalPage(
                     coroutineScope.launch { drawerState.close() }
                 }
 
+                DrawerButton("Pesquisar Barbearias", Icons.Filled.Lock, rotaAtual == TelaRotasBottom.TelaSearchBarber) {
+                    navController.navigate(TelaRotasBottom.TelaSearchBarber)
+                    coroutineScope.launch { drawerState.close() }
+                }
+
                 DrawerButton("Segurança", Icons.Filled.Lock, rotaAtual == TelaRotasBottom.TelaSeguranca) {
                     navController.navigate(TelaRotasBottom.TelaSeguranca)
                     coroutineScope.launch { drawerState.close() }
@@ -75,7 +80,7 @@ fun PrincipalPage(
                 )
 
                 DrawerButton(
-                    label = "Conta",
+                    label = "Minha Conta",
                     icon = Icons.Filled.AccountCircle,
                     isSelected = rotaAtual == TelaRotasBottom.TelaAccountUser,
                     onClick = {
@@ -99,7 +104,7 @@ fun PrincipalPage(
                 // Botão de Logout
                 TextButton(onClick = {
                     onLogout()
-                    clienteViewModel.logout()
+                    sessionViewModel.logout()
                     coroutineScope.launch { drawerState.close() }
                 }) {
                     Text(color = Color.Red, text = "Sair", fontSize = 20.sp, modifier = Modifier.padding(30.dp, 5.dp))

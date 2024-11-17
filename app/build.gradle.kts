@@ -6,15 +6,14 @@ plugins {
     id("com.google.devtools.ksp")
     id("com.google.gms.google-services")
 }
-
 android {
     namespace = "br.edu.up.nowbarber"
-    compileSdk = 34
+    compileSdk = 35  // Alterado para 35
 
     defaultConfig {
         applicationId = "br.edu.up.nowbarber"
         minSdk = 24
-        targetSdk = 34
+        targetSdk = 35  // Pode manter o targetSdk como 35 também
         versionCode = 1
         versionName = "1.0"
 
@@ -56,7 +55,9 @@ android {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
     }
+    buildToolsVersion = "35.0.0"
 }
+
 
 dependencies {
     // Dependências principais
@@ -73,6 +74,8 @@ dependencies {
     // Material Design
     implementation(libs.androidx.material3)
     implementation(libs.androidx.material.icons.extended.v150)
+    implementation(libs.androidx.ui.android)
+
 
     // Navegação
     implementation(libs.androidx.navigation.compose)
@@ -96,6 +99,8 @@ dependencies {
     implementation(libs.androidx.lifecycle.viewmodel.ktx.v261)
     implementation(libs.androidx.lifecycle.livedata.ktx.v261)
     implementation(libs.androidx.lifecycle.viewmodel.savedstate.v261)
+    implementation (libs.androidx.lifecycle.runtime.compose)
+
 
     // Testes
     testImplementation(libs.junit)
@@ -107,5 +112,8 @@ dependencies {
     // Depuração
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+
+
+
 }
 

@@ -11,12 +11,7 @@ class ClienteLocalRepository(
 ) : IRepository<Cliente> {
 
     override fun listar(): Flow<List<Cliente>> = dao.listar()
-    override suspend fun buscarPorId(id: String?): Cliente? = dao.buscarPorId(id)
+    override suspend fun buscarPorId(id: String): Cliente? = dao.buscarPorId(id.toString())
     override suspend fun gravar(item: Cliente) = dao.gravar(item)
     override suspend fun excluir(item: Cliente) = dao.excluir(item)
-
-    override suspend fun verificarLogin(email: String, senha: String): Boolean {
-        val cliente = dao.buscarPorEmail(email)
-        return cliente?.senha == senha
-    }
 }

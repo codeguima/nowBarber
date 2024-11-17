@@ -3,7 +3,7 @@ package br.edu.up.nowbarber.ui.viewmodels
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import br.edu.up.nowbarber.data.models.Barbearia
-import br.edu.up.nowbarber.data.repositories.BarbeariaRepository
+import br.edu.up.nowbarber.data.repositories.IRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
@@ -11,7 +11,7 @@ import kotlinx.coroutines.launch
 
 
 class BarbeariaViewModel(
-    private val repository: BarbeariaRepository
+    private val repository: IRepository<Barbearia>
 ): ViewModel() {
 
     // Estado para armazenar a lista de barbearias
@@ -39,8 +39,8 @@ class BarbeariaViewModel(
     }
 
 
-    suspend fun buscarBarbeariaPorId(barbeariaId: Int): Barbearia? {
-        return repository.buscarPorId(barbeariaId.toString())
+    suspend fun buscarPorId(barbeariaId: StateFlow<String?>): Barbearia? {
+        return barbeariaId?.let { repository.buscarPorId(it.toString()) }
     }
 
     fun gravarBarbearia(barbearia: Barbearia) {

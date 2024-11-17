@@ -24,22 +24,27 @@ fun AppNavigation(
         startDestination = TelaRotasBottom.TelaLogin
     ) {
         composable(TelaRotasBottom.TelaLogin) {
-            TelaLogin(
-                navController = navController,
-                clienteViewModel = clienteViewModel,
-                onLoginSuccess = {
-                    navController.navigate(TelaRotasBottom.TelaInicio) {
-                        popUpTo(TelaRotasBottom.TelaLogin) { inclusive = true }
-                    }
+            TelaLogin(navController, sessionViewModel, onLoginSuccess = {
+                navController.navigate(TelaRotasBottom.TelaInicio) {
+                    popUpTo(TelaRotasBottom.TelaLogin) { inclusive = true }
                 }
-            )
+            })
         }
 
+        composable(TelaRotasBottom.TelaCadastroLogin) {
+            TelaCadastroLogin(navController, sessionViewModel) {
+                // Após o cadastro de login, navegue para a tela de Cadastro Cliente
+                navController.navigate(TelaRotasBottom.TelaCadastroCliente) {
+                    popUpTo(TelaRotasBottom.TelaLogin) { inclusive = true }
+                }
+            }
+        }
 
-        composable(TelaRotasBottom.TelaCadastro) {
-            TelaCadastro(navController, clienteViewModel) {
+        composable(TelaRotasBottom.TelaCadastroCliente) {
+            TelaCadastroCliente(navController, clienteViewModel) {
+                // Após o cadastro do cliente, redireciona para a tela de login
                 navController.navigate(TelaRotasBottom.TelaLogin) {
-                    popUpTo(TelaRotasBottom.TelaCadastro) { inclusive = true }
+                    popUpTo(TelaRotasBottom.TelaCadastroCliente) { inclusive = true }
                 }
             }
         }
@@ -50,7 +55,7 @@ fun AppNavigation(
                 clienteViewModel = clienteViewModel,
                 servicoViewModel = servicoViewModel,
                 onLogout = {
-                    sessionViewModel.logOut()
+                    sessionViewModel.logout()
                     navController.navigate(TelaRotasBottom.TelaLogin) {
                         popUpTo(TelaRotasBottom.TelaInicio) { inclusive = true }
                     }

@@ -39,7 +39,8 @@ fun TelaMeusAcessos(
     LaunchedEffect(usuarioId) {
         usuarioId?.let {
             // Buscar o e-mail do usuário de forma assíncrona
-            val usuario = viewModel.buscarPorId(usuarioId)
+            val usuario = viewModel.buscarPorId(usuarioId.toString())
+
             usuario?.let {
                 email = it.email
             }

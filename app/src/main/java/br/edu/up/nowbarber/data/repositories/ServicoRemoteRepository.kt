@@ -32,15 +32,11 @@ class ServicoRemoteRepository : IRepository<Servico> {
         awaitClose { listener.remove() }
     }
 
-    override suspend fun buscarPorId(id: String?): Servico? {
+    override suspend fun buscarPorId(id: String): Servico? {
         val doc = servicoCollection.document(id.toString()).get().await()
         return doc.toObject(Servico::class.java)
     }
 
-
-    override suspend fun verificarLogin(email: String, senha: String): Boolean {
-        TODO("Not yet implemented")
-    }
 
     override suspend fun gravar(item: Servico) {
         val docRef = servicoCollection.document(item.id.toString())

@@ -11,15 +11,16 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface BarbeariaDao {
 
+
+    @Query("SELECT * FROM tab_barbearia")
+    fun listar(): Flow<List<Barbearia>>
+
+    @Query("select * from tab_barbearia where id = :idx")
+    suspend fun buscarPorId(idx: String?): Barbearia
+
     @Insert
     suspend fun gravar(barbearia: Barbearia)
 
     @Delete
     suspend fun excluir(barbearia: Barbearia)
-
-    @Query("SELECT * FROM tab_barbearia")
-    fun listar(): Flow<List<Barbearia>>
-
-    @Query("SELECT * FROM tab_barbearia WHERE id = :id LIMIT 1")
-    suspend fun buscarPorId(id: kotlin.String?): Barbearia?
 }
