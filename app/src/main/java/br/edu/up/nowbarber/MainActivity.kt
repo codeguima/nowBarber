@@ -18,6 +18,12 @@ import br.edu.up.nowbarber.data.repositories.ClienteRepository
 import br.edu.up.nowbarber.ui.viewmodels.ServicoViewModel
 import br.edu.up.nowbarber.ui.viewmodels.SessionViewModel
 import br.edu.up.nowbarber.ui.views.AppNavigation
+import androidx.compose.runtime.LaunchedEffect
+import br.edu.up.nowbarber.data.repositories.AgendamentoLocalRepository
+import br.edu.up.nowbarber.data.repositories.AgendamentoRemoteRepository
+import br.edu.up.nowbarber.data.repositories.AgendamentoRepository
+import br.edu.up.nowbarber.ui.viewmodels.AgendamentoViewModel
+import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
 
@@ -32,16 +38,23 @@ class MainActivity : ComponentActivity() {
             // Instância de SessionViewModel (para gerenciar sessões de usuários)
             val sessionViewModel: SessionViewModel = viewModel()
 
+            // Carregar usuarioId assim que a Activity for criada
+            LaunchedEffect(Unit) {
+                sessionViewModel.carregarUsuarioId()
+            }
+
             // ViewModels específicos
             val clienteViewModel = ClienteViewModel(dependencies.clienteRepository)
             val servicoViewModel = ServicoViewModel(dependencies.servicoRepository)
+            val agendamentoViewModel = AgendamentoViewModel(dependencies.agendamentoRepository, dependencies.servicoRepository)
 
             MaterialTheme {
                 Surface(color = MaterialTheme.colorScheme.background) {
                     AppNavigation(
                         sessionViewModel = sessionViewModel,
                         clienteViewModel = clienteViewModel,
-                        servicoViewModel = servicoViewModel
+                        servicoViewModel = servicoViewModel,
+                        agendamentoViewModel = agendamentoViewModel
                     )
                 }
             }
@@ -51,23 +64,28 @@ class MainActivity : ComponentActivity() {
     private fun provideDependencies(): DependencyProvider {
         val db = abrirBanco(this)
 
-        val servicoRemoteRepo = ServicoRemoteRepository()
-        val servicoLocalRepo = ServicoLocalRepository(db.getServicoDao())
-        val servicoRepository = ServicoRepository(servicoRemoteRepo, servicoLocalRepo)
+        val servicoRemoteRepository = ServicoRemoteRepository()
+        val servicoLocalRepository = ServicoLocalRepository(db.getServicoDao())
+        val servicoRepository = ServicoRepository(servicoRemoteRepository, servicoLocalRepository)
 
         val clienteRemoteRepo = ClienteRemoteRepository()
-        val clienteLocalRepo = ClienteLocalRepository(db.getClienteoDao())
+        val clienteLocalRepo = ClienteLocalRepository(db.getClienteDao())
         val clienteRepository = ClienteRepository(clienteRemoteRepo, clienteLocalRepo)
+
+        val agendamentoRemoteRepo = AgendamentoRemoteRepository()
+        val agendamentoLocalRepo = AgendamentoLocalRepository(db.getAgendamentoDao())
+        val agendamentoRepository = AgendamentoRepository(agendamentoLocalRepo,agendamentoRemoteRepo )
 
         return DependencyProvider(
             clienteRepository = clienteRepository,
-            servicoRepository = servicoRepository
+            servicoRepository = servicoRepository,
+            agendamentoRepository = agendamentoRepository
         )
     }
 }
 
-// Classe de provider personalizada para suas dependências
 data class DependencyProvider(
     val clienteRepository: ClienteRepository,
-    val servicoRepository: ServicoRepository
+    val servicoRepository: ServicoRepository,
+    val agendamentoRepository : AgendamentoRepository
 )

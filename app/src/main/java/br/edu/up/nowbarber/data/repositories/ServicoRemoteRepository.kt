@@ -13,37 +13,30 @@ class ServicoRemoteRepository : IRepository<Servico> {
     private val firestore = FirebaseFirestore.getInstance()
     private val servicoCollection = firestore.collection("servicos")
 
-
-
     override fun listar(): Flow<List<Servico>> = callbackFlow {
-        val listener = servicoCollection.addSnapshotListener {
-                dados, erros ->
-            if (erros != null) {
-                close(erros)
+        val listener = servicoCollection.addSnapshotListener { snapshot, error ->
+            if (error != null) {
+                close(error)
                 return@addSnapshotListener
             }
-            if (dados != null) {
-                val result = dados.documents.mapNotNull {
-                    it.toObject(Servico::class.java)
-                }
-                trySend(result).isSuccess
+            snapshot?.let {
+                val servicos = it.documents.mapNotNull { doc -> doc.toObject(Servico::class.java) }
+                trySend(servicos).isSuccess
             }
         }
         awaitClose { listener.remove() }
     }
 
     override suspend fun buscarPorId(id: String): Servico? {
-        val doc = servicoCollection.document(id.toString()).get().await()
+        val doc = servicoCollection.document(id).get().await()
         return doc.toObject(Servico::class.java)
     }
 
-
     override suspend fun gravar(item: Servico) {
-        val docRef = servicoCollection.document(item.id.toString())
-        docRef.set(item).await()
+        servicoCollection.document(item.id).set(item).await()
     }
 
     override suspend fun excluir(item: Servico) {
-        servicoCollection.document(item.id.toString()).delete().await()
+        servicoCollection.document(item.id).delete().await()
     }
 }

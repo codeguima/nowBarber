@@ -1,6 +1,5 @@
 package br.edu.up.nowbarber.ui.viewmodels
 
-
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import br.edu.up.nowbarber.data.models.Cliente
@@ -9,13 +8,11 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
-
 class ClienteViewModel(
     private val repository: IRepository<Cliente>
 ) : ViewModel() {
 
     private val _cliente = MutableStateFlow<List<Cliente>>(emptyList())
-
     val lista: StateFlow<List<Cliente>> get() = _cliente
 
     init {
@@ -31,7 +28,7 @@ class ClienteViewModel(
     }
 
     suspend fun buscarPorId(clienteId: String): Cliente? {
-        return clienteId?.let { repository.buscarPorId(it) }
+        return repository.buscarPorId(clienteId)
     }
 
     fun gravar(cliente: Cliente) {
@@ -47,6 +44,4 @@ class ClienteViewModel(
             carregarClientes()
         }
     }
-
-
 }

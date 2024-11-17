@@ -1,9 +1,5 @@
 package br.edu.up.nowbarber.ui.views
 
-import android.annotation.SuppressLint
-import android.app.DatePickerDialog
-import android.app.TimePickerDialog
-import android.content.Context
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
@@ -22,50 +18,57 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import br.edu.up.nowbarber.data.models.Barbearia
+import br.edu.up.nowbarber.data.models.Agendamento
 import br.edu.up.nowbarber.data.models.Servico
+import br.edu.up.nowbarber.ui.components.SelectDateAndTime
 import br.edu.up.nowbarber.ui.components.TopAppBar
 import br.edu.up.nowbarber.ui.components.ServicoItem
+import br.edu.up.nowbarber.ui.viewmodels.AgendamentoViewModel
 import br.edu.up.nowbarber.ui.viewmodels.ServicoViewModel
-import java.util.*
+import java.util.Calendar
+import java.util.UUID
 
-// Função principal da tela
 @Composable
 fun TelaDetalhesBarbearia(
     state: DrawerState,
     navController: NavController,
-    servicoViewModel: ServicoViewModel
+    servicoViewModel: ServicoViewModel,
+    agendamentoViewModel: AgendamentoViewModel
 ) {
-
-
     Scaffold(
         topBar = { TopAppBar(state) },
-        content = { p -> ConteudoTelaDetalhesBarbearia(Modifier.padding(p), navController, servicoViewModel) }
+        content = { p ->
+            ConteudoTelaDetalhesBarbearia(
+                Modifier.padding(p),
+                navController,
+                servicoViewModel,
+                agendamentoViewModel
+            )
+        }
     )
 }
 
-// Função do conteúdo da tela
 @Composable
-fun ConteudoTelaDetalhesBarbearia(modifier: Modifier, navController: NavController, servicoViewModel: ServicoViewModel) {
-
-    // Observar a lista de serviços
+fun ConteudoTelaDetalhesBarbearia(
+    modifier: Modifier,
+    navController: NavController,
+    servicoViewModel: ServicoViewModel,
+    agendamentoViewModel: AgendamentoViewModel
+) {
     val servicos by servicoViewModel.servicos.collectAsState()
-
-    // Estado do agendamento e serviços
-    var isFavorito by remember { mutableStateOf(false) }
     val context = LocalContext.current
+    var isFavorito by remember { mutableStateOf(false) }
 
     Column(
         modifier = modifier
             .fillMaxSize()
             .padding(16.dp)
     ) {
-        // Exibe a imagem da barbearia e o botão de favorito
+        // Exibe a imagem da barbearia
         servicos.firstOrNull()?.imageResId?.let {
             Image(
-                painter = painterResource(id = it),
+                painter = painterResource(id = it.toInt()),
                 contentDescription = null,
                 modifier = Modifier
                     .size(150.dp)
@@ -75,6 +78,7 @@ fun ConteudoTelaDetalhesBarbearia(modifier: Modifier, navController: NavControll
             )
         }
 
+        // Botão de Favorito
         IconButton(
             onClick = { isFavorito = !isFavorito },
             modifier = Modifier.align(Alignment.CenterHorizontally)
@@ -93,19 +97,21 @@ fun ConteudoTelaDetalhesBarbearia(modifier: Modifier, navController: NavControll
         LazyColumn(verticalArrangement = Arrangement.spacedBy(16.dp)) {
             items(servicos) { servico ->
                 ServicoItem(servico) {
-                    // Chama o DatePicker e TimePicker para agendar o serviço
-                    selectDateAndTime(context) { date, time ->
-                        val agendamento = Servico(
-                            name = servico.name,
-                            price = servico.price,
-                            date = "${time.get(Calendar.HOUR_OF_DAY)}:${time.get(Calendar.MINUTE)}",
-                            imageResId = servico.imageResId
+                    // Exibe o seletor de data e hora
+                    SelectDateAndTime { date, time ->
+                        val agendamento = Agendamento(
+                            id = UUID.randomUUID().toString(),
+                            clienteUid = "user_id", // Ajuste conforme necessário
+                            barbeariaId = "barbearia_id", // Ajuste conforme necessário
+                            servicoId = servico.id,
+                            dataHora = "${date.get(Calendar.DAY_OF_MONTH)}/${date.get(Calendar.MONTH) + 1}/${date.get(Calendar.YEAR)} ${time.get(Calendar.HOUR_OF_DAY)}:00",
+                            status = "pendente"
                         )
-                        // Grava o agendamento
-                        servicoViewModel.gravarServico(agendamento)
+                        agendamentoViewModel.gravar(agendamento)
+
                         Toast.makeText(
                             context,
-                            "Agendado para: ${date.time} às ${time.get(Calendar.HOUR_OF_DAY)}:${time.get(Calendar.MINUTE)}",
+                            "Agendado para: ${date.time} às ${time.get(Calendar.HOUR_OF_DAY)}:00",
                             Toast.LENGTH_SHORT
                         ).show()
                     }
@@ -113,43 +119,4 @@ fun ConteudoTelaDetalhesBarbearia(modifier: Modifier, navController: NavControll
             }
         }
     }
-}
-
-// Função para selecionar data e horário
-fun selectDateAndTime(
-    context: Context,
-    onDateTimeSelected: (Calendar, Calendar) -> Unit
-) {
-    val calendar = Calendar.getInstance()
-
-    // Exibe o DatePicker
-    val datePicker = DatePickerDialog(
-        context,
-        { _, year, month, dayOfMonth ->
-            val selectedDate = Calendar.getInstance().apply {
-                set(Calendar.YEAR, year)
-                set(Calendar.MONTH, month)
-                set(Calendar.DAY_OF_MONTH, dayOfMonth)
-            }
-            // Exibe o TimePicker após escolher a data
-            TimePickerDialog(
-                context,
-                { _, hour, minute ->
-                    val selectedTime = Calendar.getInstance().apply {
-                        set(Calendar.HOUR_OF_DAY, hour)
-                        set(Calendar.MINUTE, minute)
-                    }
-                    // Passa a data e o horário selecionado
-                    onDateTimeSelected(selectedDate, selectedTime)
-                },
-                calendar.get(Calendar.HOUR_OF_DAY),
-                calendar.get(Calendar.MINUTE),
-                true
-            ).show()
-        },
-        calendar.get(Calendar.YEAR),
-        calendar.get(Calendar.MONTH),
-        calendar.get(Calendar.DAY_OF_MONTH)
-    )
-    datePicker.show()
 }

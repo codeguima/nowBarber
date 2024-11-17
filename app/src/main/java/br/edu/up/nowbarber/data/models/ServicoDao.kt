@@ -2,25 +2,23 @@ package br.edu.up.nowbarber.data.models
 
 
 import androidx.room.Dao
-import androidx.room.Delete
 import androidx.room.Query
 import androidx.room.Upsert
 import kotlinx.coroutines.flow.Flow
 
-// 2) Data Access Objects (DAOs)
+
 @Dao
 interface ServicoDao {
-    //CRUD
-    @Query("select * from tab_servico")
+    @Query("SELECT * FROM tab_servico")
     fun listar(): Flow<List<Servico>>
 
-    @Query("select * from tab_servico where id = :idx")
-    suspend fun buscarPorId(idx: String?): Servico
+    @Query("SELECT * FROM tab_servico WHERE id = :id")
+    suspend fun buscarPorId(id: String): Servico?
 
-    //@Update @Insert
     @Upsert
     suspend fun gravar(servico: Servico)
 
-    @Delete
-    suspend fun excluir(servico: Servico)
+    @Query("DELETE FROM tab_servico WHERE id = :id")
+    suspend fun excluir(id: String)
 }
+

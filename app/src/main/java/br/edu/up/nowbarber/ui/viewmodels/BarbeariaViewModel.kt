@@ -6,56 +6,49 @@ import br.edu.up.nowbarber.data.models.Barbearia
 import br.edu.up.nowbarber.data.repositories.IRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-
 
 class BarbeariaViewModel(
     private val repository: IRepository<Barbearia>
-): ViewModel() {
+) : ViewModel() {
 
-    // Estado para armazenar a lista de barbearias
     private val _barbearias = MutableStateFlow<List<Barbearia>>(emptyList())
-    val barbearias: StateFlow<List<Barbearia>> = _barbearias
-
-    // Estado para armazenar a busca
-    private val _resultadoBusca = MutableStateFlow<List<Barbearia>>(emptyList())
-    val resultadoBusca: StateFlow<List<Barbearia>> = _resultadoBusca
+    val barbearias: StateFlow<List<Barbearia>> get() = _barbearias
 
     init {
-        // Carregar as barbearias no início
+        carregarBarbearias()
+    }
+
+    private fun carregarBarbearias() {
         viewModelScope.launch {
-            repository.listar().collectLatest { lista ->
-                _barbearias.value = lista
+            repository.listar().collect {
+                _barbearias.value = it
             }
         }
     }
 
-    fun buscarBarbearia(nome: String) {
+    suspend fun buscarPorId(id: String): Barbearia? = repository.buscarPorId(id)
+
+
+    fun buscarPorCidade(cidade: String) {
         viewModelScope.launch {
-            val resultado = _barbearias.value.filter { it.name.contains(nome, ignoreCase = true) }
-            _resultadoBusca.value = resultado // Armazenar os resultados de busca em _resultadoBusca
+            val lista = repository.buscarPorCidade(cidade)
+            _barbearias.value = lista
         }
     }
 
-
-    suspend fun buscarPorId(barbeariaId: StateFlow<String?>): Barbearia? {
-        return barbeariaId?.let { repository.buscarPorId(it.toString()) }
-    }
-
-    fun gravarBarbearia(barbearia: Barbearia) {
+    fun gravar(barbearia: Barbearia) {
         viewModelScope.launch {
-            try {
-                repository.gravar(barbearia)
-            } catch (e: Exception) {
-                // Tratar erro (exibir mensagem, log, etc.)
-            }
+            repository.gravar(barbearia)
+            carregarBarbearias()
         }
     }
 
-    fun excluirBarbearia(barbearia: Barbearia) {
+    fun excluir(barbearia: Barbearia) {
         viewModelScope.launch {
             repository.excluir(barbearia)
+            carregarBarbearias()
         }
     }
 }
+

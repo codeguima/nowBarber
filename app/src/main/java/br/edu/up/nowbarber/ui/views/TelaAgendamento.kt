@@ -18,6 +18,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import br.edu.up.nowbarber.R
+import br.edu.up.nowbarber.data.models.Agendamento
 import br.edu.up.nowbarber.data.models.Servico
 import br.edu.up.nowbarber.ui.components.TopAppBar
 import br.edu.up.nowbarber.ui.viewmodels.ClienteViewModel
@@ -46,14 +47,6 @@ fun TelaAgendamento(
     }
 
 
-    // Lista de agendamentos inicial com valores de exemplo
-    val agendamentos = remember {
-        mutableStateListOf(
-            Servico(1, "Barbearia do Zé", "50.00", Date().toString(), R.drawable.logo2),
-            Servico(2, "Corte Rápido", "40.00", Date().toString(), R.drawable.logo2),
-            Servico(3, "Barba e Cabelo", "70.00", Date().toString(), R.drawable.logo2)
-        )
-    }
 
     Scaffold(
         topBar = { TopAppBar(state) },
@@ -99,8 +92,9 @@ fun ConteudoTelaAgendamento(
 
 @Composable
 fun AgendamentoItem(
-    agendamento: Servico,
-    onDelete: (Servico) -> Unit
+    agendamento: Agendamento,
+    servico : Servico,
+    onDelete: (Agendamento) -> Unit
 ) {
     Row(
         modifier = Modifier
@@ -109,7 +103,7 @@ fun AgendamentoItem(
         verticalAlignment = Alignment.CenterVertically
     ) {
         // Imagem do agendamento
-        agendamento.imageResId?.let { imageResId ->
+        servico.imageResId?.let { imageResId ->
             Image(
                 painter = painterResource(imageResId),
                 contentDescription = null,
@@ -125,21 +119,21 @@ fun AgendamentoItem(
         // Informações do agendamento
         Column(modifier = Modifier.weight(1f)) {
             Text(
-                text = agendamento.name,
+                text = servico.nome,
                 fontSize = 20.sp,
                 color = MaterialTheme.colorScheme.secondary,
                 style = MaterialTheme.typography.titleSmall
             )
             Spacer(modifier = Modifier.height(4.dp))
             Text(
-                text = "R$ ${agendamento.price}",
+                text = "R$ ${servico.preco}",
                 fontSize = 16.sp,
                 style = MaterialTheme.typography.bodyMedium
             )
 
             val formattedDate = remember {
                 SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
-                    .format(Date(agendamento.date))
+                    .format(Date(agendamento.dataHora))
             }
             Text(
                 text = formattedDate,

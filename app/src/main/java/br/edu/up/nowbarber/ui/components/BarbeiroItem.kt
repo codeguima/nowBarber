@@ -17,7 +17,6 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import br.edu.up.nowbarber.data.models.Barbearia
 
-
 @Composable
 fun BarbeiroItem(barbeiro: Barbearia, navController: NavController) {
     Row(
@@ -26,13 +25,13 @@ fun BarbeiroItem(barbeiro: Barbearia, navController: NavController) {
             .padding(16.dp)
             .clickable {
                 // Navega para a tela de detalhes da barbearia
-                navController.navigate("detalhesBarbearia/${barbeiro.name}")
+                navController.navigate("detalhesBarbearia/${barbeiro.nome}")
             },
         verticalAlignment = Alignment.CenterVertically
     ) {
         Image(
-            painter = painterResource(barbeiro.imageResId),
-            contentDescription = barbeiro.name,
+            painter = painterResource(barbeiro.imageResId.toInt()),
+            contentDescription = barbeiro.nome,
             modifier = Modifier
                 .size(60.dp)
                 .clip(CircleShape)
@@ -41,8 +40,8 @@ fun BarbeiroItem(barbeiro: Barbearia, navController: NavController) {
         Spacer(modifier = Modifier.width(16.dp))
 
         Column(modifier = Modifier.weight(1f)) {
-            Text(text = barbeiro.name, fontSize = 18.sp, fontWeight = FontWeight.Bold)
-            Text(text = barbeiro.location, fontSize = 14.sp, color = Color.Gray)
+            Text(text = barbeiro.nome, fontSize = 18.sp, fontWeight = FontWeight.Bold)
+            Text(text = barbeiro.endereco, fontSize = 14.sp, color = Color.Gray)
         }
     }
 }

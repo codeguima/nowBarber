@@ -6,6 +6,8 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import androidx.room.TypeConverters
+import br.edu.up.nowbarber.data.models.AgendamentoDao
 import br.edu.up.nowbarber.data.models.Barbearia
 import br.edu.up.nowbarber.data.models.BarbeariaDao
 import br.edu.up.nowbarber.data.models.ServicoDao
@@ -24,10 +26,14 @@ import br.edu.up.nowbarber.data.models.Servico
     version = 2,
     exportSchema = false
 )
+
+@TypeConverters(Converters::class, GeoPointConverter::class)
+
 abstract class AppDatabase : RoomDatabase() {
     abstract fun getBarbeariaDao(): BarbeariaDao
     abstract fun getServicoDao(): ServicoDao
-    abstract fun getClienteoDao(): ClienteDao
+    abstract fun getClienteDao(): ClienteDao
+    abstract fun getAgendamentoDao(): AgendamentoDao
     // Adicione métodos para outros DAOs aqui
 }
 

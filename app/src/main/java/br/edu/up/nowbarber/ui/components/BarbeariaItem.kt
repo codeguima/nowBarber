@@ -31,10 +31,10 @@ fun BarbeariaItem(barbearia: Barbearia, onFavoritoClick: () -> Unit) {
             .clickable { /* Ação de clique para abrir detalhes */ },
         verticalAlignment = Alignment.CenterVertically
     ) {
-        barbearia.imageResId?.let { painterResource(it) }?.let {
+        barbearia.imageResId.let { painterResource(it.toInt()) }?.let {
             Image(
                 painter = it,
-                contentDescription = barbearia.name,
+                contentDescription = barbearia.nome,
                 modifier = Modifier
                     .size(60.dp)
                     .clip(CircleShape)
@@ -44,8 +44,9 @@ fun BarbeariaItem(barbearia: Barbearia, onFavoritoClick: () -> Unit) {
         Spacer(modifier = Modifier.width(16.dp))
 
         Column(modifier = Modifier.weight(1f)) {
-            Text(text = barbearia.name, fontSize = 18.sp, fontWeight = FontWeight.Bold)
-            Text(text = barbearia.location, fontSize = 14.sp, color = Color.Gray)
+            Text(text = barbearia.nome, fontSize = 18.sp, fontWeight = FontWeight.Bold)
+            Text(text = barbearia.endereco, fontSize = 14.sp, color = Color.Gray)
+            Text(text = barbearia.cidade, fontSize = 14.sp, color = Color.Gray)
         }
 
         IconButton(onClick = { onFavoritoClick() }) {

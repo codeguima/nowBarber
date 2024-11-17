@@ -19,6 +19,7 @@ import androidx.navigation.compose.rememberNavController
 import br.edu.up.nowbarber.R
 import br.edu.up.nowbarber.ui.navigation.BarberNavHost
 import br.edu.up.nowbarber.ui.navigation.TelaRotasBottom
+import br.edu.up.nowbarber.ui.viewmodels.AgendamentoViewModel
 import br.edu.up.nowbarber.ui.viewmodels.ClienteViewModel
 import br.edu.up.nowbarber.ui.viewmodels.ServicoViewModel
 import br.edu.up.nowbarber.ui.viewmodels.SessionViewModel
@@ -29,6 +30,7 @@ fun PrincipalPage(
     sessionViewModel: SessionViewModel,
     clienteViewModel: ClienteViewModel,
     servicoViewModel: ServicoViewModel,
+    agendamentoViewModel: AgendamentoViewModel,
     onLogout: () -> Unit
 ) {
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
@@ -54,7 +56,7 @@ fun PrincipalPage(
                     coroutineScope.launch { drawerState.close() }
                 }
 
-                DrawerButton("Pesquisar Barbearias", Icons.Filled.Lock, rotaAtual == TelaRotasBottom.TelaSearchBarber) {
+                DrawerButton("Pesquisar Barbearias", Icons.Filled.Search, rotaAtual == TelaRotasBottom.TelaSearchBarber) {
                     navController.navigate(TelaRotasBottom.TelaSearchBarber)
                     coroutineScope.launch { drawerState.close() }
                 }
@@ -117,7 +119,8 @@ fun PrincipalPage(
                 state = drawerState,
                 sessionViewModel = sessionViewModel,
                 clienteViewModel = clienteViewModel,
-                servicoViewModel = servicoViewModel
+                servicoViewModel = servicoViewModel,
+                agendamentoViewModel = agendamentoViewModel
             )
         }
     )

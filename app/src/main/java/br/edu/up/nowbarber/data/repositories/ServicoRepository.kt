@@ -1,53 +1,42 @@
 package br.edu.up.nowbarber.data.repositories
 
-
 import br.edu.up.nowbarber.data.models.Servico
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.flow.emitAll
+import kotlinx.coroutines.flow.flow
 
+class ServicoRepository(
+    private val servicoRemoteRepository: ServicoRemoteRepository,
+    private val servicoLocalRepository: ServicoLocalRepository
+) : IRepository<Servico> {
 
-class ServicoRepository (
+    override fun listar(): Flow<List<Servico>> = flow {
+        // Emitir dados locais primeiro
+        emitAll(servicoLocalRepository.listar())
 
-        private val remoteRepo: ServicoRemoteRepository,
-        private val localRepo: ServicoLocalRepository
-
-    ) : IRepository<Servico> {
-
-        override fun listar(): Flow<List<Servico>> = callbackFlow {
-            remoteRepo.listar().collect { servico ->
-                servico.forEach { servico ->
-                    localRepo.gravar(servico)  // Atualiza banco local com dados do remoto
-                }
-                trySend(servico)
-            }
-
-            localRepo.listar().collect { localData ->
-                if (localData.isNotEmpty()) {
-                    trySend(localData)
-                }
-            }
+        // Sincronizar com remoto e atualizar local
+        servicoRemoteRepository.listar().collect { servicos ->
+            servicos.forEach { servicoLocalRepository.gravar(it) }
+            emit(servicos) // Atualizar a UI com os dados sincronizados
         }
+    }
 
-        override suspend fun buscarPorId(id: String): Servico? {
-            var servico = localRepo.buscarPorId(id)
-            if (servico == null) {
-                servico = remoteRepo.buscarPorId(id)
-                servico?.let { localRepo.gravar(it) }  // Atualiza local caso encontrado no remoto
-            }
-            return servico
+    override suspend fun buscarPorId(id: String): Servico? {
+        var servico = servicoLocalRepository.buscarPorId(id)
+        if (servico == null) {
+            servico = servicoRemoteRepository.buscarPorId(id)
+            servico?.let { servicoLocalRepository.gravar(it) }
         }
+        return servico
+    }
 
+    override suspend fun gravar(item: Servico) {
+        servicoLocalRepository.gravar(item)
+        servicoRemoteRepository.gravar(item)
+    }
 
-    override suspend fun gravar(servico: Servico) {
-
-            localRepo.gravar(servico)
-            remoteRepo.gravar(servico)
-        }
-
-        override suspend fun excluir(servico: Servico) {
-            localRepo.excluir(servico)
-            remoteRepo.excluir(servico)
-        }
-
-
+    override suspend fun excluir(item: Servico) {
+        servicoLocalRepository.excluir(item)
+        servicoRemoteRepository.excluir(item)
+    }
 }

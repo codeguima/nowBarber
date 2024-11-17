@@ -7,34 +7,42 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.tasks.await
 
+
 class BarbeariaRemoteRepository : IRepository<Barbearia> {
 
     private val firestore = FirebaseFirestore.getInstance()
-    private val collection = firestore.collection("barbearias")
+    private val barbeariaCollection = firestore.collection("barbearias")
 
     override fun listar(): Flow<List<Barbearia>> = callbackFlow {
-        val listener = collection.addSnapshotListener { dados, erros ->
-            if (erros != null) {
-                close(erros)
+        val listener = barbeariaCollection.addSnapshotListener { snapshot, error ->
+            if (error != null) {
+                close(error)
                 return@addSnapshotListener
             }
-            val barbearias = dados?.documents?.mapNotNull { it.toObject(Barbearia::class.java) }
-            trySend(barbearias ?: emptyList()).isSuccess
+            snapshot?.let {
+                val barbearias = it.documents.mapNotNull { doc -> doc.toObject(Barbearia::class.java) }
+                trySend(barbearias).isSuccess
+            }
         }
         awaitClose { listener.remove() }
     }
 
+
+    override suspend fun buscarPorCidade(cidade: String): List<Barbearia> {
+        val snapshot = barbeariaCollection.whereEqualTo("cidade", cidade).get().await()
+        return snapshot.documents.mapNotNull { it.toObject(Barbearia::class.java) }
+    }
+
     override suspend fun buscarPorId(id: String): Barbearia? {
-        val doc = collection.document(id.toString()).get().await()
+        val doc = barbeariaCollection.document(id).get().await()
         return doc.toObject(Barbearia::class.java)
     }
 
     override suspend fun gravar(item: Barbearia) {
-        val docRef = collection.document(item.id.toString())
-        docRef.set(item).await()
+        barbeariaCollection.document(item.id).set(item).await()
     }
 
     override suspend fun excluir(item: Barbearia) {
-        collection.document(item.id.toString()).delete().await()
+        barbeariaCollection.document(item.id).delete().await()
     }
 }

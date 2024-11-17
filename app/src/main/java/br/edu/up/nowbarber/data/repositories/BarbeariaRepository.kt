@@ -6,48 +6,41 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 
 class BarbeariaRepository(
-    private val remoteRepo: BarbeariaRemoteRepository,
-    private val localRepo: BarbeariaLocalRepository
+    private val localRepo: BarbeariaLocalRepository,
+    private val remoteRepo: BarbeariaRemoteRepository
 ) : IRepository<Barbearia> {
 
-    override fun listar(): Flow<List<Barbearia>> = callbackFlow {
-        // Primeiro tenta pegar os dados do remoto
-        remoteRepo.listar().collect { barbearias ->
-            // Atualiza localmente quando obtém dados do remoto
-            barbearias.forEach { barbearia ->
-                localRepo.gravar(barbearia)  // Armazena no banco local
-            }
-            trySend(barbearias)  // Envia os dados para o fluxo
-        }
-
-        // Fallback para dados locais, caso o remoto falhe
-        localRepo.listar().collect { localData ->
-            if (localData.isNotEmpty()) {
-                trySend(localData)  // Caso o remoto falhe, retorna os dados locais
-            }
-        }
-    }
+    override fun listar(): Flow<List<Barbearia>> = remoteRepo.listar()
 
     override suspend fun buscarPorId(id: String): Barbearia? {
-        // Tenta buscar no banco local
         var barbearia = localRepo.buscarPorId(id)
         if (barbearia == null) {
-            // Caso não tenha, tenta buscar no remoto
             barbearia = remoteRepo.buscarPorId(id)
-            barbearia?.let {
-                localRepo.gravar(it)  // Se encontrado remotamente, armazena localmente
-            }
+            barbearia?.let { localRepo.gravar(it) }
         }
         return barbearia
     }
 
+
+    override suspend fun buscarPorCidade(cidade: String): List<Barbearia> {
+        val barbeariasLocal = localRepo.buscarPorCidade(cidade)
+        return if (barbeariasLocal.isNotEmpty()) {
+            barbeariasLocal
+        } else {
+            val barbeariasRemoto = remoteRepo.buscarPorCidade(cidade)
+            barbeariasRemoto.forEach { localRepo.gravar(it) } // Cache local
+            barbeariasRemoto
+        }
+    }
+
     override suspend fun gravar(item: Barbearia) {
-        localRepo.gravar(item)  // Grava no banco local
-        remoteRepo.gravar(item)  // Também grava no Firestore
+        localRepo.gravar(item)
+        remoteRepo.gravar(item)
     }
 
     override suspend fun excluir(item: Barbearia) {
-        localRepo.excluir(item)  // Exclui do banco local
-        remoteRepo.excluir(item)  // Exclui do Firestore
+        localRepo.excluir(item)
+        remoteRepo.excluir(item)
     }
 }
+

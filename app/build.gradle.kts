@@ -80,6 +80,12 @@ dependencies {
     // Navegação
     implementation(libs.androidx.navigation.compose)
 
+    //datastore
+
+    implementation (libs.gson.v289)
+    implementation (libs.androidx.datastore.preferences)
+    implementation (libs.gson)
+
     // Firebase
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.firestore.ktx)
@@ -93,7 +99,9 @@ dependencies {
     implementation(libs.androidx.room.ktx)
     implementation(libs.androidx.runtime.livedata)
     implementation(libs.firebase.auth.ktx)
+    implementation(libs.androidx.appcompat)
     ksp(libs.androidx.room.compiler)
+
 
     // ViewModel e LiveData
     implementation(libs.androidx.lifecycle.viewmodel.ktx.v261)
@@ -112,7 +120,6 @@ dependencies {
     // Depuração
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
-
 
 
 }

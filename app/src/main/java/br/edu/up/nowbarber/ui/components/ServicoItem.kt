@@ -10,7 +10,7 @@ import br.edu.up.nowbarber.data.models.Servico
 
 
 @Composable
-fun ServicoItem(servico: Servico, onClick: () -> Unit) {
+fun ServicoItem(servico: Servico, onClick: @Composable () -> Unit) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -19,10 +19,10 @@ fun ServicoItem(servico: Servico, onClick: () -> Unit) {
     ) {
         Row(modifier = Modifier.padding(16.dp)) {
             Column {
-                Text(text = servico.name, style = MaterialTheme.typography.titleMedium)
+                Text(text = servico.nome, style = MaterialTheme.typography.titleMedium)
                 Spacer(modifier = Modifier.height(8.dp))
                 // Convertendo o preço para string (se for número)
-                Text(text = "R$ ${servico.price}", style = MaterialTheme.typography.bodyMedium)
+                Text(text = "R$ ${servico.preco}", style = MaterialTheme.typography.bodyMedium)
             }
         }
     }

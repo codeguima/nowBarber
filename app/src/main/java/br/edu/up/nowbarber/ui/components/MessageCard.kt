@@ -28,7 +28,7 @@ fun MessageCard(barbeiro: Barbearia, navController: NavController) {
 
     ) {
         Image(
-            painter = painterResource(barbeiro.imageResId),
+            painter = painterResource(barbeiro.imageResId.toInt()),
             contentDescription = null,
             modifier = Modifier
                 .size(80.dp)
@@ -39,7 +39,7 @@ fun MessageCard(barbeiro: Barbearia, navController: NavController) {
 
         Column {
             Text(
-                text = barbeiro.name,
+                text = barbeiro.nome,
                 fontSize = 20.sp,
                 color = MaterialTheme.colorScheme.secondary,
                 style = MaterialTheme.typography.titleSmall
@@ -49,7 +49,7 @@ fun MessageCard(barbeiro: Barbearia, navController: NavController) {
 
             Surface(shape = MaterialTheme.shapes.medium, shadowElevation = 1.dp) {
                 Text(
-                    text = barbeiro.location,
+                    text = barbeiro.endereco,
                     fontSize = 16.sp,
                     modifier = Modifier.padding(all = 4.dp),
                     style = MaterialTheme.typography.bodyMedium

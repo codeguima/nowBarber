@@ -10,8 +10,8 @@ class BarberViewModel : ViewModel() {
     val barbearias: List<Barbearia> get() = _barbearias
 
     fun toggleFavorito(barbeiro: Barbearia) {
-        barbeiro.isFavorito = !barbeiro.isFavorito
-        if (barbeiro.isFavorito) {
+        barbeiro.isFavorite = !barbeiro.isFavorite
+        if (barbeiro.isFavorite) {
             if (!_barbearias.contains(barbeiro)) {
                 _barbearias.add(barbeiro)
             }

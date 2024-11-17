@@ -74,12 +74,7 @@ fun SectionPropagandas(modifier: Modifier = Modifier) {
 
 @Composable
 fun SectionUltimosServicos(modifier: Modifier = Modifier) {
-    // Simulação de uma lista de últimos serviços acessados
-    val servicosRecentes = listOf(
-        Servico(1, "Corte de Cabelo", 50.0.toString(), R.drawable.logo2.toString()),
-        Servico(2, "Barba e Cabelo", 70.0.toString(), R.drawable.logo2.toString()),
-        Servico(3, "Sombrancelha", 30.0.toString(), R.drawable.logo2.toString())
-    )
+
 
     Column(
         modifier = modifier
@@ -94,11 +89,6 @@ fun SectionUltimosServicos(modifier: Modifier = Modifier) {
             modifier = Modifier.padding(bottom = 8.dp)
         )
 
-        // Exibição dos serviços acessados
-        servicosRecentes.forEach { servico ->
-            UltimoServicoItem(servico = servico)
-            Spacer(modifier = Modifier.height(8.dp))
-        }
     }
 }
 
@@ -111,10 +101,10 @@ fun UltimoServicoItem(servico: Servico) {
         verticalAlignment = Alignment.CenterVertically
     ) {
         // Imagem do serviço
-        servico.imageResId?.let { painterResource(it) }?.let {
+        servico.imageResId?.let { painterResource(it.toInt()) }?.let {
             Image(
                 painter = it,
-                contentDescription = servico.name,
+                contentDescription = servico.nome,
                 modifier = Modifier
                     .size(50.dp)
                     .clip(CircleShape)
@@ -127,13 +117,13 @@ fun UltimoServicoItem(servico: Servico) {
         // Nome e preço do serviço
         Column {
             Text(
-                text = servico.name,
+                text = servico.nome,
                 fontSize = 18.sp,
                 color = MaterialTheme.colorScheme.secondary,
                 style = MaterialTheme.typography.bodyMedium
             )
             Text(
-                text = "R$ ${servico.price}",
+                text = "R$ ${servico.preco}",
                 fontSize = 16.sp,
                 color = MaterialTheme.colorScheme.primary,
                 style = MaterialTheme.typography.bodySmall
