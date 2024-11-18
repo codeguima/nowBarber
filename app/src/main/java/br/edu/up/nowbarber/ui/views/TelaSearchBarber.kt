@@ -1,6 +1,5 @@
 package br.edu.up.nowbarber.ui.views
 
-
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -24,7 +23,7 @@ import androidx.navigation.NavController
 import br.edu.up.nowbarber.R
 import br.edu.up.nowbarber.ui.components.BarbeiroItem
 import br.edu.up.nowbarber.ui.viewmodels.BarbeariaViewModel
-import br.edu.up.nowbarber.ui.viewmodels.ServicoViewModel
+
 
 @Composable
 fun TelaSearchBarber(
@@ -140,13 +139,15 @@ fun ConteudoTelaSearchBarber(
             }
         }
 
-        // Exibe a lista de barbearias
         LazyColumn(modifier = Modifier.fillMaxSize()) {
             items(filteredBarbearias) { barbearia ->
-                // Aqui, passamos o modelo de dados 'barbearia' diretamente para o componente BarbeiroItem
-                BarbeiroItem(barbearia = barbearia, navController = navController)
+                BarbeiroItem(barbearia, navController)
             }
         }
+
     }
 }
+
+
+
 

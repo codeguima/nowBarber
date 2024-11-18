@@ -1,5 +1,6 @@
 package br.edu.up.nowbarber.ui.components
 
+
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -15,6 +16,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import br.edu.up.nowbarber.R
 import br.edu.up.nowbarber.data.models.Barbearia
 
 @Composable
@@ -29,8 +31,17 @@ fun BarbeiroItem(barbearia: Barbearia, navController: NavController) {
             },
         verticalAlignment = Alignment.CenterVertically
     ) {
+        // Tentativa de obter o recurso de imagem do drawable
+        val imageResId = try {
+            barbearia.image.toInt()
+        } catch (e: NumberFormatException) {
+            // Use um recurso padrão caso ocorra erro
+            R.drawable.semfoto
+        }
+
+        // Exibir imagem
         Image(
-            painter = painterResource(barbearia.imageResId.toInt()),
+            painter = painterResource(imageResId),
             contentDescription = barbearia.nome,
             modifier = Modifier
                 .size(60.dp)
@@ -39,10 +50,21 @@ fun BarbeiroItem(barbearia: Barbearia, navController: NavController) {
 
         Spacer(modifier = Modifier.width(16.dp))
 
-        Column(modifier = Modifier.weight(1f)) {
-            Text(text = barbearia.nome, fontSize = 18.sp, fontWeight = FontWeight.Bold)
-            Text(text = barbearia.endereco, fontSize = 14.sp, color = Color.Gray)
+        // Usar weight corretamente
+        Column(
+            modifier = Modifier
+                .weight(1f) // Aplica o peso aqui
+        ) {
+            Text(
+                text = barbearia.nome,
+                fontSize = 18.sp,
+                fontWeight = FontWeight.Bold
+            )
+            Text(
+                text = barbearia.endereco,
+                fontSize = 14.sp,
+                color = Color.Gray
+            )
         }
     }
 }
-

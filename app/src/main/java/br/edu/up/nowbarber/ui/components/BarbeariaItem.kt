@@ -31,7 +31,7 @@ fun BarbeariaItem(barbearia: Barbearia, onFavoritoClick: () -> Unit) {
         verticalAlignment = Alignment.CenterVertically
     ) {
         // Recuperando o nome do arquivo da imagem do Firebase
-        val imageResName = barbearia.imageResId  // Ex: "logo1"
+        val imageResName = barbearia.image  // Ex: "logo1"
 
         // Usando getIdentifier para pegar o ID do drawable dinamicamente
         val context = LocalContext.current

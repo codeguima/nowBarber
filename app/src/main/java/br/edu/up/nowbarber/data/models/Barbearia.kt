@@ -16,7 +16,7 @@ data class Barbearia(
     val cidade: String = "",  // Campo adicionado
     val telefone: String = "",
     var coordenadas: GeoPoint? = null,
-    val imageResId: String = "",
+    val image: String = "",
     val isFavorite: Boolean = false,
     val servicos: Map<String, Double>
 ){
@@ -27,7 +27,7 @@ data class Barbearia(
         cidade = "",
         telefone = "",
         coordenadas = null,
-        imageResId = "",
+        image = "",
         isFavorite = false,
         servicos = emptyMap()
     )
