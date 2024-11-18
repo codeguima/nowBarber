@@ -1,5 +1,6 @@
 [versions]
 agp = "8.7.2"
+coilCompose = "2.4.0"
 datastorePreferences = "1.1.1"
 firebaseAuth = "23.1.0"
 firebaseBom = "33.6.0"
@@ -56,6 +57,7 @@ androidx-room-runtime = { module = "androidx.room:room-runtime", version.ref = "
 androidx-security-crypto = { module = "androidx.security:security-crypto", version.ref = "securityCrypto" }
 androidx-security-crypto-v110alpha05 = { module = "androidx.security:security-crypto", version.ref = "securityCryptoVersion" }
 androidx-ui-android = { module = "androidx.compose.ui:ui-android", version.ref = "uiAndroid" }
+coil-compose = { module = "io.coil-kt:coil-compose", version.ref = "coilCompose" }
 firebase-analytics = { module = "com.google.firebase:firebase-analytics" }
 firebase-analytics-ktx = { module = "com.google.firebase:firebase-analytics-ktx" }
 firebase-auth = { module = "com.google.firebase:firebase-auth", version.ref = "firebaseAuth" }

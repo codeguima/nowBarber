@@ -129,5 +129,9 @@ dependencies {
 
     implementation (libs.play.services.auth)
     implementation (libs.play.services.location)
+
+    //carregaR IMAGENS
+
+    implementation(libs.coil.compose)
 }
 
