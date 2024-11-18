@@ -27,19 +27,31 @@ import br.edu.up.nowbarber.ui.viewmodels.BarbeariaViewModel
 import br.edu.up.nowbarber.ui.viewmodels.ServicoViewModel
 
 @Composable
-fun TelaSearchBarber(state: DrawerState, navController: NavController, viewModel: ServicoViewModel) {
+fun TelaSearchBarber(
+    state: DrawerState,
+    navController: NavController,
+    barbeariaViewModel: BarbeariaViewModel
+
+) {
     Scaffold(
         topBar = { br.edu.up.nowbarber.ui.components.TopAppBar(state) },
-        content = { p -> ConteudoTelaSearchBarber(Modifier.padding(p), navController, viewModel) },
+        content = { p -> ConteudoTelaSearchBarber(
+            Modifier.padding(p),
+            navController,
+            barbeariaViewModel
+        ) },
     )
 }
 
 @Composable
-fun ConteudoTelaSearchBarber(modifier: Modifier, navController: NavController, viewModel: BarbeariaViewModel) {
-
+fun ConteudoTelaSearchBarber(
+    modifier: Modifier,
+    navController: NavController,
+    barbeariaViewModel: BarbeariaViewModel
+) {
     var searchText by remember { mutableStateOf("") }
     var selectedCity by remember { mutableStateOf<String?>(null) }
-    val barbearias by viewModel.barbearias.collectAsState()
+    val barbearias by barbeariaViewModel.barbearias.collectAsState()
 
     // Filtro das barbearias com base na cidade
     val filteredBarbearias = barbearias.filter {
@@ -131,8 +143,10 @@ fun ConteudoTelaSearchBarber(modifier: Modifier, navController: NavController, v
         // Exibe a lista de barbearias
         LazyColumn(modifier = Modifier.fillMaxSize()) {
             items(filteredBarbearias) { barbearia ->
-                BarbeiroItem(barbearia, navController)
+                // Aqui, passamos o modelo de dados 'barbearia' diretamente para o componente BarbeiroItem
+                BarbeiroItem(barbearia = barbearia, navController = navController)
             }
         }
     }
 }
+

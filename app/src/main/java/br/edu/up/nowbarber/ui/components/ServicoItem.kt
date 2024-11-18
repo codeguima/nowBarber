@@ -10,11 +10,11 @@ import br.edu.up.nowbarber.data.models.Servico
 
 
 @Composable
-fun ServicoItem(servico: Servico, onClick: @Composable () -> Unit) {
+fun ServicoItem(servico: Servico, onClick: () -> Unit) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable { onClick() },
+            .clickable { onClick() },  // Chama uma função regular no lugar de uma Composable
         elevation = CardDefaults.cardElevation(8.dp)
     ) {
         Row(modifier = Modifier.padding(16.dp)) {

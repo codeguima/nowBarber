@@ -90,6 +90,10 @@ dependencies {
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.firestore.ktx)
     implementation(libs.firebase.analytics)
+    implementation (libs.firebase.firestore)
+    implementation (libs.firebase.auth)
+    implementation (libs.firebase.storage)
+
 
     // Biblioteca de segurança (senha)
     implementation(libs.jbcrypt)
@@ -121,6 +125,9 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 
+    //google play services
 
+    implementation (libs.play.services.auth)
+    implementation (libs.play.services.location)
 }
 

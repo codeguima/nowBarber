@@ -72,10 +72,10 @@ fun BottomAppBar(navController: NavController) {
 
         // Item para TelaAgendamento
         NavigationBarItem(
-            selected = currentRoute == TelaRotasBottom.TelaAgendamento,
+            selected = currentRoute == TelaRotasBottom.TelaMeusAgendamentos,
             onClick = {
-                if (currentRoute != TelaRotasBottom.TelaAgendamento) {
-                    navController.navigate(TelaRotasBottom.TelaAgendamento)
+                if (currentRoute != TelaRotasBottom.TelaMeusAgendamentos) {
+                    navController.navigate(TelaRotasBottom.TelaMeusAgendamentos)
                 }
             },
             icon = {

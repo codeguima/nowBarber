@@ -22,7 +22,11 @@ import androidx.compose.runtime.LaunchedEffect
 import br.edu.up.nowbarber.data.repositories.AgendamentoLocalRepository
 import br.edu.up.nowbarber.data.repositories.AgendamentoRemoteRepository
 import br.edu.up.nowbarber.data.repositories.AgendamentoRepository
+import br.edu.up.nowbarber.data.repositories.BarbeariaLocalRepository
+import br.edu.up.nowbarber.data.repositories.BarbeariaRemoteRepository
+import br.edu.up.nowbarber.data.repositories.BarbeariaRepository
 import br.edu.up.nowbarber.ui.viewmodels.AgendamentoViewModel
+import br.edu.up.nowbarber.ui.viewmodels.BarbeariaViewModel
 import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
@@ -47,6 +51,8 @@ class MainActivity : ComponentActivity() {
             val clienteViewModel = ClienteViewModel(dependencies.clienteRepository)
             val servicoViewModel = ServicoViewModel(dependencies.servicoRepository)
             val agendamentoViewModel = AgendamentoViewModel(dependencies.agendamentoRepository, dependencies.servicoRepository)
+            val barbeariaViewModel = BarbeariaViewModel(dependencies.barbeariaRepository)
+
 
             MaterialTheme {
                 Surface(color = MaterialTheme.colorScheme.background) {
@@ -54,7 +60,8 @@ class MainActivity : ComponentActivity() {
                         sessionViewModel = sessionViewModel,
                         clienteViewModel = clienteViewModel,
                         servicoViewModel = servicoViewModel,
-                        agendamentoViewModel = agendamentoViewModel
+                        agendamentoViewModel = agendamentoViewModel,
+                        barbeariaViewModel = barbeariaViewModel
                     )
                 }
             }
@@ -74,12 +81,17 @@ class MainActivity : ComponentActivity() {
 
         val agendamentoRemoteRepo = AgendamentoRemoteRepository()
         val agendamentoLocalRepo = AgendamentoLocalRepository(db.getAgendamentoDao())
-        val agendamentoRepository = AgendamentoRepository(agendamentoLocalRepo,agendamentoRemoteRepo )
+        val agendamentoRepository = AgendamentoRepository(agendamentoLocalRepo,agendamentoRemoteRepo)
+
+        val barbeariaRemoteRepo = BarbeariaRemoteRepository()
+        val barbeariaLocalRepo = BarbeariaLocalRepository(db.getBarbeariaDao())
+        val barbeariaRepository = BarbeariaRepository(barbeariaLocalRepo,barbeariaRemoteRepo )
 
         return DependencyProvider(
             clienteRepository = clienteRepository,
             servicoRepository = servicoRepository,
-            agendamentoRepository = agendamentoRepository
+            agendamentoRepository = agendamentoRepository,
+            barbeariaRepository = barbeariaRepository
         )
     }
 }
@@ -87,5 +99,6 @@ class MainActivity : ComponentActivity() {
 data class DependencyProvider(
     val clienteRepository: ClienteRepository,
     val servicoRepository: ServicoRepository,
-    val agendamentoRepository : AgendamentoRepository
+    val agendamentoRepository : AgendamentoRepository,
+    val barbeariaRepository : BarbeariaRepository
 )

@@ -1,7 +1,10 @@
 [versions]
 agp = "8.7.2"
 datastorePreferences = "1.1.1"
+firebaseAuth = "23.1.0"
 firebaseBom = "33.6.0"
+firebaseFirestore = "25.1.1"
+firebaseStorage = "21.0.1"
 gson = "2.10.1"
 gsonVersion = "2.8.9"
 jbcrypt = "0.4"
@@ -22,6 +25,8 @@ materialIconsExtendedVersion = "1.7.5"
 navigationCompose = "2.8.4"
 firebaseFirestoreKtx = "25.1.1"
 mediationTestSuite = "3.0.0"
+playServicesAuth = "21.2.0"
+playServicesLocation = "21.3.0"
 roomCompiler = "2.6.1"
 roomKtx = "2.6.1"
 runtimeLivedata = "1.7.5"
@@ -53,7 +58,10 @@ androidx-security-crypto-v110alpha05 = { module = "androidx.security:security-cr
 androidx-ui-android = { module = "androidx.compose.ui:ui-android", version.ref = "uiAndroid" }
 firebase-analytics = { module = "com.google.firebase:firebase-analytics" }
 firebase-analytics-ktx = { module = "com.google.firebase:firebase-analytics-ktx" }
+firebase-auth = { module = "com.google.firebase:firebase-auth", version.ref = "firebaseAuth" }
 firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebaseBom" }
+firebase-firestore = { module = "com.google.firebase:firebase-firestore", version.ref = "firebaseFirestore" }
+firebase-storage = { module = "com.google.firebase:firebase-storage", version.ref = "firebaseStorage" }
 gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
 gson-v289 = { module = "com.google.code.gson:gson", version.ref = "gsonVersion" }
 jbcrypt = { module = "org.mindrot:jbcrypt", version.ref = "jbcrypt" }
@@ -78,6 +86,8 @@ androidx-benchmark-baseline-profile-gradle-plugin = { group = "androidx.benchmar
 firebase-auth-ktx = { group = "com.google.firebase", name = "firebase-auth-ktx", version.ref = "firebaseAuthKtx" }
 androidx-ui-desktop = { group = "androidx.compose.ui", name = "ui-desktop", version.ref = "uiDesktop" }
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
+play-services-auth = { module = "com.google.android.gms:play-services-auth", version.ref = "playServicesAuth" }
+play-services-location = { module = "com.google.android.gms:play-services-location", version.ref = "playServicesLocation" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

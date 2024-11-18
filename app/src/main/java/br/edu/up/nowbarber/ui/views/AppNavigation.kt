@@ -8,6 +8,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import br.edu.up.nowbarber.ui.navigation.TelaRotasBottom
 import br.edu.up.nowbarber.ui.viewmodels.AgendamentoViewModel
+import br.edu.up.nowbarber.ui.viewmodels.BarbeariaViewModel
 import br.edu.up.nowbarber.ui.viewmodels.ClienteViewModel
 import br.edu.up.nowbarber.ui.viewmodels.ServicoViewModel
 import br.edu.up.nowbarber.ui.viewmodels.SessionViewModel
@@ -17,7 +18,8 @@ fun AppNavigation(
     sessionViewModel: SessionViewModel,
     clienteViewModel: ClienteViewModel,
     servicoViewModel: ServicoViewModel,
-    agendamentoViewModel : AgendamentoViewModel
+    agendamentoViewModel : AgendamentoViewModel,
+    barbeariaViewModel : BarbeariaViewModel
 ) {
     val navController = rememberNavController()
 
@@ -57,6 +59,7 @@ fun AppNavigation(
                 clienteViewModel = clienteViewModel,
                 servicoViewModel = servicoViewModel,
                 agendamentoViewModel = agendamentoViewModel,
+                barbeariaViewModel = barbeariaViewModel,
                 onLogout = {
                     sessionViewModel.logout()
                     navController.navigate(TelaRotasBottom.TelaLogin) {

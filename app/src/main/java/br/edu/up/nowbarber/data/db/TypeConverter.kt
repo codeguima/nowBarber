@@ -19,4 +19,14 @@ class Converters {
         return gson.toJson(list)
     }
 
+    @TypeConverter
+    fun fromMap(servicos: Map<String, Double>): String {
+        return Gson().toJson(servicos)
+    }
+
+    @TypeConverter
+    fun toMap(data: String): Map<String, Double> {
+        val type = object : TypeToken<Map<String, Double>>() {}.type
+        return Gson().fromJson(data, type)
+    }
 }

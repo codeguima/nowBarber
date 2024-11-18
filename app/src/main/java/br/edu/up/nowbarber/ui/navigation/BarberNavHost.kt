@@ -5,7 +5,9 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import br.edu.up.nowbarber.ui.navigation.TelaRotasBottom.TelaMeusAgendamentos
 import br.edu.up.nowbarber.ui.viewmodels.AgendamentoViewModel
+import br.edu.up.nowbarber.ui.viewmodels.BarbeariaViewModel
 import br.edu.up.nowbarber.ui.viewmodels.ClienteViewModel
 import br.edu.up.nowbarber.ui.viewmodels.ServicoViewModel
 import br.edu.up.nowbarber.ui.viewmodels.SessionViewModel
@@ -17,8 +19,9 @@ fun BarberNavHost(
     state: DrawerState,
     servicoViewModel: ServicoViewModel,
     clienteViewModel: ClienteViewModel,
-    sessionViewModel: SessionViewModel, // Gerenciamento do usuário logado
-    agendamentoViewModel: AgendamentoViewModel // Gerenciamento dos agendamentos
+    sessionViewModel: SessionViewModel,
+    agendamentoViewModel: AgendamentoViewModel,
+    barbeariaViewModel: BarbeariaViewModel
 ) {
     NavHost(
         navController = navController,
@@ -28,10 +31,10 @@ fun BarberNavHost(
             TelaInicio(state)
         }
         composable(TelaRotasBottom.TelaSearchBarber) {
-            TelaSearchBarber(state, navController, servicoViewModel)
+            TelaSearchBarber(state, navController, barbeariaViewModel )
         }
-        composable(TelaRotasBottom.TelaAgendamento) {
-            TelaAgendamento(state, clienteViewModel, servicoViewModel)
+        composable(TelaRotasBottom.TelaMeusAgendamentos) {
+            TelaMeusAgendamentos(state, agendamentoViewModel)
         }
         composable(TelaRotasBottom.TelaSeguranca) {
             TelaSeguranca(state, sessionViewModel)

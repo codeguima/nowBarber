@@ -23,7 +23,7 @@ fun TelaMeusAcessos(
 
 ) {
 
-    val usuarioId = sessionViewModel.usuarioId
+    val usuarioId by sessionViewModel.usuarioId.collectAsState()
 
     // Resto da lógica da tela
     if (usuarioId != null) {

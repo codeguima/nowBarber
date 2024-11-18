@@ -20,7 +20,10 @@ class BarbeariaRemoteRepository : IRepository<Barbearia> {
                 return@addSnapshotListener
             }
             snapshot?.let {
-                val barbearias = it.documents.mapNotNull { doc -> doc.toObject(Barbearia::class.java) }
+                val barbearias = it.documents.mapNotNull { doc ->
+                    val barbearia = doc.toObject(Barbearia::class.java)
+                    barbearia?.copy(servicos = barbearia.ajustarServicos()) // Ajusta as chaves dos serviços
+                }
                 trySend(barbearias).isSuccess
             }
         }

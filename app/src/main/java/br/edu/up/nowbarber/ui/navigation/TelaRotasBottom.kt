@@ -3,7 +3,7 @@ package br.edu.up.nowbarber.ui.navigation
 object TelaRotasBottom {
     const val TelaInicio = "inicio"
     const val TelaSearchBarber = "pesquisa"
-    const val TelaAgendamento = "agendamento"
+    const val TelaMeusAgendamentos = "meusAgendamentos"
     const val TelaDetalhesBarbearia = "detalhesBarbearia"
     const val TelaLogin = "login"
     const val TelaCadastroLogin = "cadastrologin"

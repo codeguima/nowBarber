@@ -20,6 +20,7 @@ import br.edu.up.nowbarber.R
 import br.edu.up.nowbarber.ui.navigation.BarberNavHost
 import br.edu.up.nowbarber.ui.navigation.TelaRotasBottom
 import br.edu.up.nowbarber.ui.viewmodels.AgendamentoViewModel
+import br.edu.up.nowbarber.ui.viewmodels.BarbeariaViewModel
 import br.edu.up.nowbarber.ui.viewmodels.ClienteViewModel
 import br.edu.up.nowbarber.ui.viewmodels.ServicoViewModel
 import br.edu.up.nowbarber.ui.viewmodels.SessionViewModel
@@ -31,6 +32,7 @@ fun PrincipalPage(
     clienteViewModel: ClienteViewModel,
     servicoViewModel: ServicoViewModel,
     agendamentoViewModel: AgendamentoViewModel,
+    barbeariaViewModel: BarbeariaViewModel,
     onLogout: () -> Unit
 ) {
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
@@ -58,6 +60,11 @@ fun PrincipalPage(
 
                 DrawerButton("Pesquisar Barbearias", Icons.Filled.Search, rotaAtual == TelaRotasBottom.TelaSearchBarber) {
                     navController.navigate(TelaRotasBottom.TelaSearchBarber)
+                    coroutineScope.launch { drawerState.close() }
+                }
+
+                DrawerButton("Meus Agendamentos", Icons.Filled.CalendarMonth, rotaAtual == TelaRotasBottom.TelaMeusAgendamentos) {
+                    navController.navigate(TelaRotasBottom.TelaMeusAgendamentos)
                     coroutineScope.launch { drawerState.close() }
                 }
 
@@ -120,7 +127,8 @@ fun PrincipalPage(
                 sessionViewModel = sessionViewModel,
                 clienteViewModel = clienteViewModel,
                 servicoViewModel = servicoViewModel,
-                agendamentoViewModel = agendamentoViewModel
+                agendamentoViewModel = agendamentoViewModel,
+                barbeariaViewModel = barbeariaViewModel
             )
         }
     )
