@@ -1,6 +1,7 @@
 package br.edu.up.nowbarber.data.repositories
 
 import br.edu.up.nowbarber.data.models.Cliente
+import kotlinx.coroutines.flow.Flow
 
 class ClienteRepository(
     private val remoteRepo: ClienteRemoteRepository,
@@ -22,6 +23,11 @@ class ClienteRepository(
         }
         return cliente
     }
+
+    override suspend fun atualizarEmail(id: String, novoEmail: String): Flow<Result<Unit>> {
+        return remoteRepo.atualizarEmail(id, novoEmail)
+    }
+
 
     override suspend fun excluir(item: Cliente) {
         localRepo.excluir(item)

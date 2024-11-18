@@ -15,7 +15,6 @@ import com.google.firebase.auth.FirebaseAuthUserCollisionException
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-
 import kotlinx.coroutines.flow.first
 
 
@@ -119,6 +118,34 @@ class SessionViewModel(application: Application) : AndroidViewModel(application)
                 }
             }
     }
+
+
+
+    fun atualizarEmail(emailAtual: String, novaSenha: String, novoEmail: String, onSuccess: () -> Unit, onError: (String) -> Unit) {
+        val user = FirebaseAuth.getInstance().currentUser
+
+        if (user != null && user.email != null) {
+            val credential = EmailAuthProvider.getCredential(emailAtual, novaSenha)
+
+            // Reautenticar antes de atualizar
+            user.reauthenticate(credential).addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    user.updateEmail(novoEmail).addOnCompleteListener { updateTask ->
+                        if (updateTask.isSuccessful) {
+                            onSuccess()
+                        } else {
+                            onError("Erro ao atualizar e-mail.")
+                        }
+                    }
+                } else {
+                    onError("Reautenticação falhou.")
+                }
+            }
+        } else {
+            onError("Usuário não autenticado.")
+        }
+    }
+
 
     // Função para salvar o usuarioId no DataStore
     private suspend fun salvarUsuarioId(usuarioId: String?) {

@@ -40,7 +40,7 @@ fun BarberNavHost(
             TelaSeguranca(state, sessionViewModel)
         }
         composable(TelaRotasBottom.TelaMeusAcessos) {
-            TelaMeusAcessos(state, sessionViewModel)
+            TelaMeusAcessos(state, sessionViewModel, clienteViewModel)
         }
         composable(TelaRotasBottom.TelaPayments) {
             TelaPayments(state)

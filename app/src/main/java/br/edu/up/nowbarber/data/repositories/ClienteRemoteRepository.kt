@@ -6,6 +6,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.tasks.await
 
 class ClienteRemoteRepository : IRepository<Cliente> {
@@ -30,9 +31,28 @@ class ClienteRemoteRepository : IRepository<Cliente> {
     }
 
     override suspend fun buscarPorId(id: String): Cliente? {
-        val doc = clienteCollection.document(id).get().await()
-        return doc.toObject(Cliente::class.java)
+        return try {
+            val doc = clienteCollection.document(id).get().await()
+            doc.toObject(Cliente::class.java)?.takeIf { it.email.isNotBlank() } // Verifica se o e-mail está preenchido
+        } catch (e: Exception) {
+            // Log de erro, se necessário
+            null
+        }
     }
+
+    override suspend fun atualizarEmail(id: String, novoEmail: String): Flow<Result<Unit>> = flow {
+        try {
+            clienteCollection.document(id).update("email", novoEmail).await()
+            emit(Result.success(Unit))
+        } catch (e: Exception) {
+
+            emit(Result.failure(e))
+        }
+    }
+
+
+
+
 
     override suspend fun gravar(item: Cliente) {
         val uid = item.uid.ifEmpty { FirebaseAuth.getInstance().currentUser?.uid ?: return }
@@ -42,4 +62,8 @@ class ClienteRemoteRepository : IRepository<Cliente> {
     override suspend fun excluir(item: Cliente) {
         clienteCollection.document(item.uid).delete().await()
     }
+
+
+
+
 }

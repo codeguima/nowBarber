@@ -22,7 +22,7 @@ class ClienteViewModel(
     private fun carregarClientes() {
         viewModelScope.launch {
             repository.listar().collect { lista ->
-                _cliente.value = lista
+                _cliente.value = lista  // Atualiza a lista reativamente
             }
         }
     }
@@ -34,14 +34,31 @@ class ClienteViewModel(
     fun gravar(cliente: Cliente) {
         viewModelScope.launch {
             repository.gravar(cliente)
-            carregarClientes()
+            carregarClientes()  // Recarrega a lista após gravar
         }
     }
+
+    fun atualizarEmail(id: String, novoEmail: String, onSuccess: () -> Unit, onError: (String) -> Unit) {
+        viewModelScope.launch {
+
+            repository.atualizarEmail(id, novoEmail).collect { result ->
+
+                if (result.isSuccess) {
+                    onSuccess()
+                } else {
+                    val errorMessage = result.exceptionOrNull()?.message ?: "Erro desconhecido"
+                    onError(errorMessage)
+                }
+            }
+        }
+    }
+
 
     fun excluir(cliente: Cliente) {
         viewModelScope.launch {
             repository.excluir(cliente)
-            carregarClientes()
+            carregarClientes()  // Recarrega a lista após exclusão
         }
     }
 }
+

@@ -9,7 +9,6 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
-import androidx.lifecycle.viewmodel.compose.viewModel
 import br.edu.up.nowbarber.R
 import br.edu.up.nowbarber.data.models.Cliente
 import br.edu.up.nowbarber.ui.components.TopAppBar
@@ -20,8 +19,9 @@ import br.edu.up.nowbarber.ui.viewmodels.SessionViewModel
 @Composable
 fun TelaAccountUser(
     state: DrawerState,
-    sessionViewModel: SessionViewModel = viewModel(),
-    clienteViewModel: ClienteViewModel = viewModel()
+    sessionViewModel: SessionViewModel,
+    clienteViewModel: ClienteViewModel
+
 ) {
 
     val usuarioId by sessionViewModel.usuarioId.collectAsState()
