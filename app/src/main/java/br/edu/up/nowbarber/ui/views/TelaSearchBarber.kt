@@ -23,7 +23,7 @@ import androidx.navigation.NavController
 import br.edu.up.nowbarber.R
 import br.edu.up.nowbarber.ui.components.BarbeiroItem
 import br.edu.up.nowbarber.ui.viewmodels.BarbeariaViewModel
-
+import com.google.firebase.auth.FirebaseAuth
 
 @Composable
 fun TelaSearchBarber(
@@ -42,6 +42,7 @@ fun TelaSearchBarber(
     )
 }
 
+
 @Composable
 fun ConteudoTelaSearchBarber(
     modifier: Modifier,
@@ -52,9 +53,18 @@ fun ConteudoTelaSearchBarber(
     var selectedCity by remember { mutableStateOf<String?>(null) }
     val barbearias by barbeariaViewModel.barbearias.collectAsState()
 
-    // Filtro das barbearias com base na cidade
+    // Obtenha o nome do usuário logado
+    val user = FirebaseAuth.getInstance().currentUser
+    val userName = user?.displayName ?: "Visitante"
+
+    // Filtro das barbearias com base no texto e na cidade
     val filteredBarbearias = barbearias.filter {
-        selectedCity == null || it.endereco.contains(selectedCity ?: "", ignoreCase = true)
+        val matchesCity = selectedCity == null || it.cidade.equals(selectedCity, ignoreCase = true)
+        val matchesSearch = it.nome.contains(searchText, ignoreCase = true) ||
+                it.endereco.contains(searchText, ignoreCase = true) ||
+                it.cidade.contains(searchText, ignoreCase = true)
+
+        matchesCity && matchesSearch
     }
 
     Column(
@@ -62,9 +72,9 @@ fun ConteudoTelaSearchBarber(
             .fillMaxSize()
             .padding(16.dp)
     ) {
-        // Texto "Olá, Jhonny" no topo
+        // Texto "Olá, [Nome do Usuário]" no topo
         Text(
-            text = "Olá, Jhonny",
+            text = "Olá, $userName",
             fontWeight = FontWeight.Bold,
             color = Color.Black,
             modifier = Modifier
@@ -126,28 +136,27 @@ fun ConteudoTelaSearchBarber(
                         expanded = false
                     }
                 )
-                // Adicionar mais cidades ao filtro
-                listOf("São Paulo", "Rio de Janeiro", "Belo Horizonte").forEach { cidade ->
-                    DropdownMenuItem(
-                        text = { Text(cidade) },
-                        onClick = {
-                            selectedCity = cidade
-                            expanded = false
-                        }
-                    )
-                }
+                barbearias.map { it.cidade }
+                    .distinct()
+                    .forEach { cidade ->
+                        DropdownMenuItem(
+                            text = { Text(cidade) },
+                            onClick = {
+                                selectedCity = cidade
+                                expanded = false
+                            }
+                        )
+                    }
             }
         }
 
+        // Exibe a lista de barbearias
         LazyColumn(modifier = Modifier.fillMaxSize()) {
             items(filteredBarbearias) { barbearia ->
                 BarbeiroItem(barbearia, navController)
             }
         }
-
     }
 }
-
-
 
 

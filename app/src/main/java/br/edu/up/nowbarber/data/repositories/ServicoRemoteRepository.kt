@@ -10,33 +10,37 @@ import kotlinx.coroutines.tasks.await
 
 class ServicoRemoteRepository : IRepository<Servico> {
 
-    private val firestore = FirebaseFirestore.getInstance()
-    private val servicoCollection = firestore.collection("servicos")
+        private val firestore = FirebaseFirestore.getInstance()
+        private val servicoCollection = firestore.collection("servicos")
 
-    override fun listar(): Flow<List<Servico>> = callbackFlow {
-        val listener = servicoCollection.addSnapshotListener { snapshot, error ->
-            if (error != null) {
-                close(error)
-                return@addSnapshotListener
+        override fun listar(): Flow<List<Servico>> = callbackFlow {
+            val listener = servicoCollection.addSnapshotListener { snapshot, error ->
+                if (error != null) {
+                    close(error)  // Fecha o fluxo em caso de erro
+                    return@addSnapshotListener
+                }
+                snapshot?.let {
+                    val servicos =
+                        it.documents.mapNotNull { doc -> doc.toObject(Servico::class.java) }
+                    trySend(servicos).isSuccess  // Envia os serviços ao Flow
+                }
             }
-            snapshot?.let {
-                val servicos = it.documents.mapNotNull { doc -> doc.toObject(Servico::class.java) }
-                trySend(servicos).isSuccess
+            awaitClose {
+                listener.remove()  // Remove o listener quando o Flow for fechado
             }
         }
-        awaitClose { listener.remove() }
-    }
 
-    override suspend fun buscarPorId(id: String): Servico? {
-        val doc = servicoCollection.document(id).get().await()
-        return doc.toObject(Servico::class.java)
-    }
+        override suspend fun buscarPorId(id: String): Servico? {
+            val doc = servicoCollection.document(id).get().await()
+            return doc.toObject(Servico::class.java)
+        }
 
-    override suspend fun gravar(item: Servico) {
-        servicoCollection.document(item.id).set(item).await()
-    }
+        override suspend fun gravar(item: Servico) {
+            servicoCollection.document(item.id).set(item).await()
+        }
 
-    override suspend fun excluir(item: Servico) {
-        servicoCollection.document(item.id).delete().await()
-    }
+        override suspend fun excluir(item: Servico) {
+            servicoCollection.document(item.id).delete().await()
+        }
+
 }

@@ -2,7 +2,6 @@ package br.edu.up.nowbarber.data.repositories
 
 import br.edu.up.nowbarber.data.models.Servico
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.flow
 
 class ServicoRepository(
@@ -11,13 +10,17 @@ class ServicoRepository(
 ) : IRepository<Servico> {
 
     override fun listar(): Flow<List<Servico>> = flow {
-        // Emitir dados locais primeiro
-        emitAll(servicoLocalRepository.listar())
+        // Coletar dados locais primeiro
+        servicoLocalRepository.listar().collect { servicosLocais ->
+            emit(servicosLocais) // Emite a lista concreta de serviços locais
+        }
 
-        // Sincronizar com remoto e atualizar local
-        servicoRemoteRepository.listar().collect { servicos ->
-            servicos.forEach { servicoLocalRepository.gravar(it) }
-            emit(servicos) // Atualizar a UI com os dados sincronizados
+        // Sincronizar com o repositório remoto e atualizar o repositório local
+        servicoRemoteRepository.listar().collect { servicosRemotos ->
+            servicosRemotos.forEach { servico ->
+                servicoLocalRepository.gravar(servico)  // Atualiza o banco local
+            }
+            emit(servicosRemotos) // Emite a lista de serviços remotos
         }
     }
 

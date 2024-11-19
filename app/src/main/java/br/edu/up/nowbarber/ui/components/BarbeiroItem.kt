@@ -27,7 +27,7 @@ fun BarbeiroItem(barbearia: Barbearia, navController: NavController) {
             .padding(16.dp)
             .clickable {
                 // Navega para a tela de detalhes da barbearia
-                navController.navigate("detalhesBarbearia/${barbearia.nome}")
+                navController.navigate("detalhesBarbearia/${barbearia.id}")
             },
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -62,6 +62,11 @@ fun BarbeiroItem(barbearia: Barbearia, navController: NavController) {
             )
             Text(
                 text = barbearia.endereco,
+                fontSize = 14.sp,
+                color = Color.Gray
+            )
+            Text(
+                text = barbearia.cidade,
                 fontSize = 14.sp,
                 color = Color.Gray
             )

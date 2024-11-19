@@ -22,11 +22,18 @@ class ServicoViewModel(
 
     private fun carregarServicos() {
         viewModelScope.launch {
-            repository.listar().collect {
-                _servicos.value = it
+            try {
+                repository.listar().collect {
+                    _servicos.value = it
+                }
+            } catch (e: Exception) {
+
+                _servicos.value = emptyList()
+
             }
         }
     }
+
 
     suspend fun buscarPorId(id: String): Servico? = repository.buscarPorId(id)
 

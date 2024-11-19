@@ -20,15 +20,16 @@ class BarbeariaRemoteRepository : IRepository<Barbearia> {
                 return@addSnapshotListener
             }
             snapshot?.let {
+
                 val barbearias = it.documents.mapNotNull { doc ->
-                    val barbearia = doc.toObject(Barbearia::class.java)
-                    barbearia?.copy(servicos = barbearia.ajustarServicos()) // Ajusta as chaves dos serviços
+                    doc.toObject(Barbearia::class.java)
                 }
                 trySend(barbearias).isSuccess
             }
         }
         awaitClose { listener.remove() }
     }
+
 
 
     override suspend fun buscarPorCidade(cidade: String): List<Barbearia> {

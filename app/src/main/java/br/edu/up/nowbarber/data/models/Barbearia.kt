@@ -18,7 +18,7 @@ data class Barbearia(
     var coordenadas: GeoPoint? = null,
     val image: String = "",
     val isFavorite: Boolean = false,
-    val servicos: Map<String, Double>
+    val servicos: Map<String, Double>  = emptyMap(),
 ){
     constructor() : this(
         id = "",
@@ -32,11 +32,4 @@ data class Barbearia(
         servicos = emptyMap()
     )
 
-    // Função para substituir chaves com caracteres especiais
-    fun ajustarServicos(): Map<String, Double> {
-        return servicos.mapKeys { (key, _) ->
-            key.replace(" + ", "_mais_")
-                .replace(" ", "_") // Substituir espaços por underscores
-        }
-    }
 }

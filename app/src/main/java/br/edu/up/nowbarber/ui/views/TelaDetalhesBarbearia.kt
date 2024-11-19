@@ -12,6 +12,7 @@ import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -20,30 +21,41 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import br.edu.up.nowbarber.R
 import br.edu.up.nowbarber.data.models.Agendamento
-import br.edu.up.nowbarber.data.models.Servico
 import br.edu.up.nowbarber.ui.components.TopAppBar
+import br.edu.up.nowbarber.data.models.Cliente
+import br.edu.up.nowbarber.data.models.Servico
 import br.edu.up.nowbarber.ui.components.ServicoItem
 import br.edu.up.nowbarber.ui.viewmodels.AgendamentoViewModel
+import br.edu.up.nowbarber.ui.viewmodels.ClienteViewModel
 import br.edu.up.nowbarber.ui.viewmodels.ServicoViewModel
+import br.edu.up.nowbarber.ui.viewmodels.SessionViewModel
+
 import java.util.Calendar
 import java.util.UUID
 
 @Composable
 fun TelaDetalhesBarbearia(
-    state: DrawerState,
+    state : DrawerState,
     navController: NavController,
     servicoViewModel: ServicoViewModel,
-    agendamentoViewModel: AgendamentoViewModel
+    agendamentoViewModel: AgendamentoViewModel,
+    clienteViewModel: ClienteViewModel,
+    sessionViewModel: SessionViewModel,
+    barbeariaId: String?
 ) {
     Scaffold(
         topBar = { TopAppBar(state) },
-        content = { p ->
+        content = { padding ->
             ConteudoTelaDetalhesBarbearia(
-                Modifier.padding(p),
-                navController,
-                servicoViewModel,
-                agendamentoViewModel
+                modifier = Modifier.padding(padding),
+                navController = navController,
+                servicoViewModel = servicoViewModel,
+                agendamentoViewModel = agendamentoViewModel,
+                clienteViewModel = clienteViewModel,
+                sessionViewModel = sessionViewModel,
+                barbeariaId = barbeariaId
             )
         }
     )
@@ -54,70 +66,83 @@ fun ConteudoTelaDetalhesBarbearia(
     modifier: Modifier,
     navController: NavController,
     servicoViewModel: ServicoViewModel,
-    agendamentoViewModel: AgendamentoViewModel
+    agendamentoViewModel: AgendamentoViewModel,
+    clienteViewModel: ClienteViewModel,
+    sessionViewModel: SessionViewModel,
+    barbeariaId: String?
 ) {
     val servicos by servicoViewModel.servicos.collectAsState()
     val context = LocalContext.current
-    var isFavorito by remember { mutableStateOf(false) }
-    var showDatePicker by remember { mutableStateOf(false) } // Controle para exibir o seletor de data e hora
-    var selectedServico by remember { mutableStateOf<Servico?>(null) } // Serviço selecionado
+    var showDatePicker by remember { mutableStateOf(false) }
+    var selectedServico by remember { mutableStateOf<Servico?>(null) }
+    val servicosFiltrados = servicos.filter { it.barbeariaId == barbeariaId }
+
+    var cliente by remember { mutableStateOf<Cliente?>(null) }
+    val usuarioId by sessionViewModel.usuarioId.collectAsState()
+    var isLoading by remember { mutableStateOf(true) }
+
+    LaunchedEffect(usuarioId) {
+        isLoading = true
+        cliente = clienteViewModel.buscarPorId(usuarioId.toString())
+        isLoading = false
+    }
 
     Column(
         modifier = modifier
             .fillMaxSize()
             .padding(16.dp)
     ) {
-        // Exibe a imagem da barbearia
-        servicos.firstOrNull()?.imageResId?.let {
-            Image(
-                painter = painterResource(id = it.toInt()),
-                contentDescription = null,
-                modifier = Modifier
-                    .size(150.dp)
-                    .clip(CircleShape)
-                    .align(Alignment.CenterHorizontally)
-                    .padding(top = 20.dp)
-            )
-        }
+        Image(
+            painter = painterResource(R.drawable.semfoto),
+            contentDescription = null,
+            modifier = Modifier
+                .size(150.dp)
+                .clip(CircleShape)
+                .align(Alignment.CenterHorizontally)
+                .padding(top = 20.dp)
+        )
 
-        // Botão de Favorito
-        IconButton(
-            onClick = { isFavorito = !isFavorito },
+        Text(
+            text = "Serviços Disponíveis",
+            style = MaterialTheme.typography.headlineSmall,
             modifier = Modifier.align(Alignment.CenterHorizontally)
-        ) {
-            Icon(
-                imageVector = if (isFavorito) Icons.Filled.Favorite else Icons.Filled.FavoriteBorder,
-                contentDescription = null,
-                tint = if (isFavorito) Color.Red else Color.Gray,
-                modifier = Modifier.size(40.dp)
-            )
-        }
+        )
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Exibe a lista de serviços
-        LazyColumn(verticalArrangement = Arrangement.spacedBy(16.dp)) {
-            items(servicos) { servico ->
-                ServicoItem(servico) {
-                    // Quando o serviço for clicado, atualiza o estado para exibir o seletor de data e hora
-                    selectedServico = servico
-                    showDatePicker = true
+        if (servicosFiltrados.isEmpty()) {
+            Text(
+                text = "Nenhum serviço disponível para esta barbearia.",
+                style = MaterialTheme.typography.bodyLarge,
+                color = MaterialTheme.colorScheme.error,
+                modifier = Modifier.align(Alignment.CenterHorizontally)
+            )
+        } else {
+            LazyColumn(verticalArrangement = Arrangement.spacedBy(16.dp)) {
+                items(servicosFiltrados) { servico ->
+                    ServicoItem(servico) {
+                        selectedServico = servico
+                        showDatePicker = true
+                    }
                 }
             }
         }
 
-        // Exibe o seletor de data e hora somente se showDatePicker for true
         if (showDatePicker && selectedServico != null) {
             SelectDateAndTime { date, time ->
-                val agendamento = Agendamento(
-                    id = UUID.randomUUID().toString(),
-                    clienteUid = "user_id", // Ajuste conforme necessário
-                    barbeariaId = "barbearia_id", // Ajuste conforme necessário
-                    servicoId = selectedServico!!.id,
-                    dataHora = "${date.get(Calendar.DAY_OF_MONTH)}/${date.get(Calendar.MONTH) + 1}/${date.get(Calendar.YEAR)} ${time.get(Calendar.HOUR_OF_DAY)}:00",
-                    status = "pendente"
-                )
-                agendamentoViewModel.gravar(agendamento)
+                val agendamento = cliente?.let {
+                    Agendamento(
+                        id = UUID.randomUUID().toString(),
+                        clienteUid = it.uid,
+                        barbeariaId = barbeariaId ?: "",
+                        servicoId = selectedServico!!.id,
+                        dataHora = "${date.get(Calendar.DAY_OF_MONTH)}/${date.get(Calendar.MONTH) + 1}/${date.get(Calendar.YEAR)} ${time.get(Calendar.HOUR_OF_DAY)}:00",
+                        status = "pendente"
+                    )
+                }
+                if (agendamento != null) {
+                    agendamentoViewModel.gravar(agendamento)
+                }
 
                 Toast.makeText(
                     context,
@@ -125,12 +150,14 @@ fun ConteudoTelaDetalhesBarbearia(
                     Toast.LENGTH_SHORT
                 ).show()
 
-                // Após o agendamento, oculta o seletor de data e hora
+                navController.navigate("pesquisa")
+
                 showDatePicker = false
             }
         }
     }
 }
+
 
 @Composable
 fun SelectDateAndTime(

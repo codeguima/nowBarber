@@ -3,9 +3,10 @@ package br.edu.up.nowbarber.ui.navigation
 import androidx.compose.material3.DrawerState
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import br.edu.up.nowbarber.ui.navigation.TelaRotasBottom.TelaMeusAgendamentos
+import androidx.navigation.navArgument
 import br.edu.up.nowbarber.ui.viewmodels.AgendamentoViewModel
 import br.edu.up.nowbarber.ui.viewmodels.BarbeariaViewModel
 import br.edu.up.nowbarber.ui.viewmodels.ClienteViewModel
@@ -23,6 +24,7 @@ fun BarberNavHost(
     agendamentoViewModel: AgendamentoViewModel,
     barbeariaViewModel: BarbeariaViewModel
 ) {
+
     NavHost(
         navController = navController,
         startDestination = TelaRotasBottom.TelaInicio
@@ -52,15 +54,19 @@ fun BarberNavHost(
             TelaFavoritos(state)
         }
 
-        composable(TelaRotasBottom.TelaDetalhesBarbearia + "/{barbeariaNome}") { backStackEntry ->
-            val barbeariaNome = backStackEntry.arguments?.getString("barbeariaNome")
-            TelaDetalhesBarbearia(
-                state = state,
-                navController = navController,
-                servicoViewModel = servicoViewModel,
-                agendamentoViewModel = agendamentoViewModel // Passa o AgendamentoViewModel para a tela
+        composable(
+            route = TelaRotasBottom.TelaDetalhesBarbearia + "/{barbeariaId}",
+            arguments = listOf(
+                navArgument("barbeariaId") { type = NavType.StringType }
+            )
+        ) { backStackEntry ->
+            val barbeariaId = backStackEntry.arguments?.getString("barbeariaId")
+            TelaDetalhesBarbearia(state, navController, servicoViewModel, agendamentoViewModel,
+                clienteViewModel, sessionViewModel, barbeariaId
             )
         }
+
+
 
         composable(TelaRotasBottom.TelaLogin) {
             TelaLogin(navController, sessionViewModel, onLoginSuccess = {

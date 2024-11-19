@@ -14,16 +14,29 @@ fun ServicoItem(servico: Servico, onClick: () -> Unit) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable { onClick() },  // Chama uma função regular no lugar de uma Composable
+            .padding(vertical = 8.dp) // Adiciona espaçamento entre os itens
+            .clickable { onClick() }, // Ação ao clicar no item
         elevation = CardDefaults.cardElevation(8.dp)
     ) {
         Row(modifier = Modifier.padding(16.dp)) {
             Column {
-                Text(text = servico.nome, style = MaterialTheme.typography.titleMedium)
+                Text(
+                    text = servico.nome,
+                    style = MaterialTheme.typography.titleMedium
+                )
                 Spacer(modifier = Modifier.height(8.dp))
-                // Convertendo o preço para string (se for número)
-                Text(text = "R$ ${servico.preco}", style = MaterialTheme.typography.bodyMedium)
+                Text(
+                    text = "R$ %.2f".format(servico.preco), // Formata preço para duas casas decimais
+                    style = MaterialTheme.typography.bodyMedium
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(
+                    text = servico.descricao,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
             }
         }
     }
 }
+

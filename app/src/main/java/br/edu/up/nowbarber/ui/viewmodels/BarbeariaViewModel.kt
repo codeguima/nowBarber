@@ -1,8 +1,10 @@
 package br.edu.up.nowbarber.ui.viewmodels
 
+import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import br.edu.up.nowbarber.data.models.Barbearia
+import br.edu.up.nowbarber.data.models.Servico
 import br.edu.up.nowbarber.data.repositories.IRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -37,6 +39,7 @@ class BarbeariaViewModel(
         }
     }
 
+
     fun gravar(barbearia: Barbearia) {
         viewModelScope.launch {
             repository.gravar(barbearia)
@@ -50,5 +53,7 @@ class BarbeariaViewModel(
             carregarBarbearias()
         }
     }
+
+
 }
 
