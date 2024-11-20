@@ -18,7 +18,7 @@ data class Barbearia(
     var coordenadas: GeoPoint? = null,
     val image: String = "",
     val isFavorite: Boolean = false,
-    val servicos: Map<String, Double>  = emptyMap(),
+
 ){
     constructor() : this(
         id = "",
@@ -29,7 +29,7 @@ data class Barbearia(
         coordenadas = null,
         image = "",
         isFavorite = false,
-        servicos = emptyMap()
+
     )
 
 }

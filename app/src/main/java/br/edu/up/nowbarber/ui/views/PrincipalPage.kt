@@ -108,7 +108,7 @@ fun PrincipalPage(
                     }
                 )
                 // Outros botões...
-                Spacer(modifier = Modifier.height(300.dp))
+                Spacer(modifier = Modifier.height(200.dp))
 
                 // Botão de Logout
                 TextButton(onClick = {

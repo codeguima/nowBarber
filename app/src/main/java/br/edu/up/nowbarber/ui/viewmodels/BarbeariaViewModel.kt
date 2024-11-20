@@ -3,6 +3,7 @@ package br.edu.up.nowbarber.ui.viewmodels
 import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.NavController
 import br.edu.up.nowbarber.data.models.Barbearia
 import br.edu.up.nowbarber.data.models.Servico
 import br.edu.up.nowbarber.data.repositories.IRepository
@@ -54,6 +55,15 @@ class BarbeariaViewModel(
         }
     }
 
+
+    fun navegarParaDetalhesBarbearia(navController: NavController, barbeariaId: String?) {
+        if (barbeariaId.isNullOrBlank()) {
+            // Tratar erro
+            navController.navigate("erro")
+        } else {
+            navController.navigate("detalhesBarbearia/$barbeariaId")
+        }
+    }
 
 }
 

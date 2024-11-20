@@ -26,8 +26,11 @@ fun BarbeiroItem(barbearia: Barbearia, navController: NavController) {
             .fillMaxWidth()
             .padding(16.dp)
             .clickable {
-                // Navega para a tela de detalhes da barbearia
-                navController.navigate("detalhesBarbearia/${barbearia.id}")
+
+                if (barbearia.id != null) {
+                    navController.navigate("detalhesBarbearia/${barbearia.id}")
+                }
+
             },
         verticalAlignment = Alignment.CenterVertically
     ) {

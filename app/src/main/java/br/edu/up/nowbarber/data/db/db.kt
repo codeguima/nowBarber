@@ -46,6 +46,5 @@ fun abrirBanco(context: Context): AppDatabase {
         context.applicationContext,
         AppDatabase::class.java,
         name = "arquivo.db"
-    ).fallbackToDestructiveMigration()//sso apagará todos os dados do banco de dados sempre que houver uma alteração no esquema.
-        .build()
+    ).build()
 }

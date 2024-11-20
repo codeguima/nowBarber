@@ -2,6 +2,7 @@ package br.edu.up.nowbarber.data.repositories
 
 import br.edu.up.nowbarber.data.models.Servico
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
 
 class ServicoRepository(
@@ -11,17 +12,29 @@ class ServicoRepository(
 
     override fun listar(): Flow<List<Servico>> = flow {
         // Coletar dados locais primeiro
-        servicoLocalRepository.listar().collect { servicosLocais ->
-            emit(servicosLocais) // Emite a lista concreta de serviços locais
+        val servicosLocais = servicoLocalRepository.listar().first()
+
+        // Coletar dados remotos
+        val servicosRemotos = servicoRemoteRepository.listar().first()
+
+        // Comparar listas e remover serviços locais que não existem mais no remoto
+        val idsRemotos = servicosRemotos.map { it.id }.toSet()
+        val idsLocais = servicosLocais.map { it.id }.toSet()
+
+        // Serviços locais que não estão mais no remoto (deletar do local)
+        val idsParaExcluir = idsLocais - idsRemotos
+        idsParaExcluir.forEach { id ->
+            servicoLocalRepository.excluir(Servico(id = id))  // Excluir do banco local
         }
 
-        // Sincronizar com o repositório remoto e atualizar o repositório local
-        servicoRemoteRepository.listar().collect { servicosRemotos ->
-            servicosRemotos.forEach { servico ->
-                servicoLocalRepository.gravar(servico)  // Atualiza o banco local
-            }
-            emit(servicosRemotos) // Emite a lista de serviços remotos
+        // Sincronizar com o banco local
+        servicosRemotos.forEach { servico ->
+            // Grava os novos serviços remotos no banco local
+            servicoLocalRepository.gravar(servico)
         }
+
+        // Emitir a lista final de serviços, após a sincronização
+        emit(servicosRemotos)
     }
 
     override suspend fun buscarPorId(id: String): Servico? {

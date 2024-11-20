@@ -61,6 +61,7 @@ fun BarberNavHost(
             )
         ) { backStackEntry ->
             val barbeariaId = backStackEntry.arguments?.getString("barbeariaId")
+
             TelaDetalhesBarbearia(state, navController, servicoViewModel, agendamentoViewModel,
                 clienteViewModel, sessionViewModel, barbeariaId
             )

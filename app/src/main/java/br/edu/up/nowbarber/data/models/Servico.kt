@@ -12,5 +12,5 @@ data class Servico(
     var descricao: String = "",
     var preco: Double = 0.0,
     var barbeariaId: String = "",
-    var imageResId : String = ""
+    var imageResId: String = ""
 )

@@ -1,25 +1,22 @@
 package br.edu.up.nowbarber.ui.views
 
 import android.content.Context
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+
 import androidx.navigation.NavController
 import br.edu.up.nowbarber.R
 import br.edu.up.nowbarber.data.models.Agendamento
@@ -63,7 +60,7 @@ fun TelaDetalhesBarbearia(
 
 @Composable
 fun ConteudoTelaDetalhesBarbearia(
-    modifier: Modifier,
+    modifier: Modifier = Modifier,
     navController: NavController,
     servicoViewModel: ServicoViewModel,
     agendamentoViewModel: AgendamentoViewModel,
@@ -71,16 +68,43 @@ fun ConteudoTelaDetalhesBarbearia(
     sessionViewModel: SessionViewModel,
     barbeariaId: String?
 ) {
+
+    Log.d("DEBUG", "Barbearia ID: $barbeariaId")
+
+    if (barbeariaId.isNullOrBlank()) {
+        // Exibir mensagem de erro caso barbeariaId seja inválido
+        Column(
+            modifier = modifier
+                .fillMaxSize()
+                .padding(16.dp),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text(
+                text = "Erro: Barbearia não encontrada.",
+                color = MaterialTheme.colorScheme.error,
+                style = MaterialTheme.typography.headlineSmall
+            )
+            Button(onClick = { navController.navigateUp() }) {
+                Text("Voltar")
+            }
+
+        }
+        return
+    }
+
     val servicos by servicoViewModel.servicos.collectAsState()
     val context = LocalContext.current
     var showDatePicker by remember { mutableStateOf(false) }
     var selectedServico by remember { mutableStateOf<Servico?>(null) }
+
     val servicosFiltrados = servicos.filter { it.barbeariaId == barbeariaId }
 
     var cliente by remember { mutableStateOf<Cliente?>(null) }
     val usuarioId by sessionViewModel.usuarioId.collectAsState()
     var isLoading by remember { mutableStateOf(true) }
 
+    // Carregar dados do cliente
     LaunchedEffect(usuarioId) {
         isLoading = true
         cliente = clienteViewModel.buscarPorId(usuarioId.toString())
@@ -92,6 +116,7 @@ fun ConteudoTelaDetalhesBarbearia(
             .fillMaxSize()
             .padding(16.dp)
     ) {
+        // Imagem de destaque
         Image(
             painter = painterResource(R.drawable.semfoto),
             contentDescription = null,
@@ -102,6 +127,7 @@ fun ConteudoTelaDetalhesBarbearia(
                 .padding(top = 20.dp)
         )
 
+        // Título
         Text(
             text = "Serviços Disponíveis",
             style = MaterialTheme.typography.headlineSmall,
@@ -110,31 +136,42 @@ fun ConteudoTelaDetalhesBarbearia(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        if (servicosFiltrados.isEmpty()) {
-            Text(
-                text = "Nenhum serviço disponível para esta barbearia.",
-                style = MaterialTheme.typography.bodyLarge,
-                color = MaterialTheme.colorScheme.error,
-                modifier = Modifier.align(Alignment.CenterHorizontally)
-            )
+        // Indicador de carregamento
+        if (isLoading) {
+            CircularProgressIndicator(modifier = Modifier.align(Alignment.CenterHorizontally))
         } else {
-            LazyColumn(verticalArrangement = Arrangement.spacedBy(16.dp)) {
-                items(servicosFiltrados) { servico ->
-                    ServicoItem(servico) {
-                        selectedServico = servico
-                        showDatePicker = true
+            // Exibir lista de serviços ou mensagem de erro
+            if (servicosFiltrados.isEmpty()) {
+                Text(
+                    text = "Nenhum serviço disponível para esta barbearia.",
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = MaterialTheme.colorScheme.error,
+                    modifier = Modifier.align(Alignment.CenterHorizontally)
+
+                )
+                Button(onClick = { navController.navigateUp() }) {
+                    Text("Voltar")
+                }
+            } else {
+                LazyColumn(verticalArrangement = Arrangement.spacedBy(16.dp)) {
+                    items(servicosFiltrados) { servico ->
+                        ServicoItem(servico) {
+                            selectedServico = servico
+                            showDatePicker = true
+                        }
                     }
                 }
             }
         }
 
+        // Seleção de data e horário
         if (showDatePicker && selectedServico != null) {
             SelectDateAndTime { date, time ->
                 val agendamento = cliente?.let {
                     Agendamento(
                         id = UUID.randomUUID().toString(),
                         clienteUid = it.uid,
-                        barbeariaId = barbeariaId ?: "",
+                        barbeariaId = barbeariaId,
                         servicoId = selectedServico!!.id,
                         dataHora = "${date.get(Calendar.DAY_OF_MONTH)}/${date.get(Calendar.MONTH) + 1}/${date.get(Calendar.YEAR)} ${time.get(Calendar.HOUR_OF_DAY)}:00",
                         status = "pendente"
@@ -150,13 +187,17 @@ fun ConteudoTelaDetalhesBarbearia(
                     Toast.LENGTH_SHORT
                 ).show()
 
-                navController.navigate("pesquisa")
+                navController.navigate("pesquisa") {
+                    popUpTo("detalhesBarbearia/${barbeariaId}") { inclusive = true }
+                }
+
 
                 showDatePicker = false
             }
         }
     }
 }
+
 
 
 @Composable

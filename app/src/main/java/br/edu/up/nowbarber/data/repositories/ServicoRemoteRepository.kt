@@ -1,5 +1,6 @@
 package br.edu.up.nowbarber.data.repositories
 
+import android.util.Log
 import br.edu.up.nowbarber.data.models.Servico
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.channels.awaitClose
@@ -16,7 +17,8 @@ class ServicoRemoteRepository : IRepository<Servico> {
         override fun listar(): Flow<List<Servico>> = callbackFlow {
             val listener = servicoCollection.addSnapshotListener { snapshot, error ->
                 if (error != null) {
-                    close(error)  // Fecha o fluxo em caso de erro
+                    Log.e("ServicoRepo", "Erro ao sincronizar: ${error.message}")
+                    close(error)
                     return@addSnapshotListener
                 }
                 snapshot?.let {
@@ -36,7 +38,11 @@ class ServicoRemoteRepository : IRepository<Servico> {
         }
 
         override suspend fun gravar(item: Servico) {
+            if (item.id.isEmpty()) {
+                item.id = servicoCollection.document().id
+            }
             servicoCollection.document(item.id).set(item).await()
+
         }
 
         override suspend fun excluir(item: Servico) {
