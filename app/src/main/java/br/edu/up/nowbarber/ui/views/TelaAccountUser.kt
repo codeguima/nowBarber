@@ -14,21 +14,20 @@ import br.edu.up.nowbarber.data.models.Cliente
 import br.edu.up.nowbarber.ui.components.TopAppBar
 import br.edu.up.nowbarber.ui.viewmodels.ClienteViewModel
 import br.edu.up.nowbarber.ui.viewmodels.SessionViewModel
-
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.material3.AlertDialog
 
 @Composable
 fun TelaAccountUser(
     state: DrawerState,
     sessionViewModel: SessionViewModel,
     clienteViewModel: ClienteViewModel
-
 ) {
-
     val usuarioId by sessionViewModel.usuarioId.collectAsState()
-
 
     var cliente by remember { mutableStateOf<Cliente?>(null) }
     var isLoading by remember { mutableStateOf(true) }
+    var showDeleteConfirmationDialog by remember { mutableStateOf(false) }
 
     LaunchedEffect(usuarioId) {
         isLoading = true
@@ -47,7 +46,10 @@ fun TelaAccountUser(
                         TelaDadosCliente(
                             modifier = Modifier.padding(padding),
                             cliente = cliente!!,
-                            onSaveClick = { clienteViewModel.gravar(it) }
+                            onSaveClick = { clienteViewModel.gravar(it) },
+                            onDeleteClick = {
+                                showDeleteConfirmationDialog = true
+                            }
                         )
                     } else {
                         TelaCadastroIncompleto(
@@ -60,8 +62,17 @@ fun TelaAccountUser(
             }
         }
     )
-}
 
+    if (showDeleteConfirmationDialog) {
+        DeleteConfirmationDialog(
+            onConfirm = {
+                cliente?.let { clienteViewModel.excluir(it) } // Deleta a conta
+                sessionViewModel.logout() // Finaliza a sessão
+            },
+            onDismiss = { showDeleteConfirmationDialog = false }
+        )
+    }
+}
 
 @Composable
 fun LoadingScreen() {
@@ -90,7 +101,6 @@ fun isCadastroCompleto(cliente: Cliente?): Boolean {
             !cliente?.genero.isNullOrEmpty()
 }
 
-
 @Composable
 fun TelaCadastroIncompleto(
     modifier: Modifier = Modifier,
@@ -101,17 +111,18 @@ fun TelaCadastroIncompleto(
         modifier = modifier,
         cliente = cliente,
         onSaveClick = onSaveClick,
-        titulo = "Complete seu Cadastro"
+        titulo = "Complete seu Cadastro",
+        onDeleteClick = TODO()
     )
 }
-
 
 @Composable
 fun TelaDadosCliente(
     modifier: Modifier = Modifier,
     cliente: Cliente,
     onSaveClick: (Cliente) -> Unit,
-    titulo: String = "Minha Conta"
+    titulo: String = "Minha Conta",
+    onDeleteClick: () -> Unit // Novo parâmetro para a ação de deletar
 ) {
     var nome by remember { mutableStateOf(cliente.nome) }
     var celular by remember { mutableStateOf(cliente.telefone) }
@@ -178,6 +189,20 @@ fun TelaDadosCliente(
         ) {
             Text("Salvar")
         }
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        // Botão de deletar conta
+        Button(
+            onClick = onDeleteClick,
+            colors = ButtonDefaults.buttonColors(
+                containerColor = Color.Red,
+                contentColor = Color.White
+            ),
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text("Deletar Conta")
+        }
     }
 }
 
@@ -194,4 +219,23 @@ fun GenderButton(gender: String, selectedGender: String, onClick: () -> Unit) {
     ) {
         Text(text = gender)
     }
+}
+
+@Composable
+fun DeleteConfirmationDialog(onConfirm: () -> Unit, onDismiss: () -> Unit) {
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text("Confirmar exclusão") },
+        text = { Text("Você tem certeza de que deseja excluir sua conta? Esta ação não pode ser desfeita.") },
+        confirmButton = {
+            TextButton(onClick = onConfirm) {
+                Text("Excluir", color = Color.Red)
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) {
+                Text("Cancelar")
+            }
+        }
+    )
 }

@@ -111,6 +111,7 @@ fun AgendamentoItem(
 
         // Informações do agendamento e serviço
         Column(modifier = Modifier.weight(1f)) {
+            // Nome do serviço
             Text(
                 text = servico.nome,
                 fontSize = 20.sp,
@@ -118,16 +119,30 @@ fun AgendamentoItem(
                 style = MaterialTheme.typography.titleSmall
             )
             Spacer(modifier = Modifier.height(4.dp))
+            // Preço do serviço
             Text(
                 text = "R$ ${servico.preco}",
                 fontSize = 16.sp,
                 style = MaterialTheme.typography.bodyMedium
             )
 
+            // Nome da barbearia
+            servico.barbeariaNome?.let {
+                Text(
+                    text = "Barbearia: $it",
+                    fontSize = 14.sp,
+                    style = MaterialTheme.typography.bodySmall
+                )
+            }
+
+            // Formatação da data e hora
             val formattedDate = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
                 .format(Date(agendamento.dataHora))
+            val formattedTime = SimpleDateFormat("HH:mm", Locale.getDefault())
+                .format(Date(agendamento.dataHora))
+
             Text(
-                text = formattedDate,
+                text = "Data: $formattedDate | Hora: $formattedTime",
                 fontSize = 14.sp,
                 style = MaterialTheme.typography.bodySmall
             )

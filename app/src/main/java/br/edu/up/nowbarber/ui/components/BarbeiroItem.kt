@@ -25,24 +25,18 @@ fun BarbeiroItem(barbearia: Barbearia, navController: NavController) {
         modifier = Modifier
             .fillMaxWidth()
             .padding(16.dp)
-            .clickable {
-
-                if (barbearia.id != null) {
-                    navController.navigate("detalhesBarbearia/${barbearia.id}")
-                }
-
-            },
+            .clickable {navController.navigate("servicos/${barbearia.id}")
+          },
         verticalAlignment = Alignment.CenterVertically
     ) {
-        // Tentativa de obter o recurso de imagem do drawable
+
         val imageResId = try {
             barbearia.image.toInt()
         } catch (e: NumberFormatException) {
-            // Use um recurso padrão caso ocorra erro
+
             R.drawable.semfoto
         }
 
-        // Exibir imagem
         Image(
             painter = painterResource(imageResId),
             contentDescription = barbearia.nome,
@@ -53,10 +47,9 @@ fun BarbeiroItem(barbearia: Barbearia, navController: NavController) {
 
         Spacer(modifier = Modifier.width(16.dp))
 
-        // Usar weight corretamente
         Column(
             modifier = Modifier
-                .weight(1f) // Aplica o peso aqui
+                .weight(1f) 
         ) {
             Text(
                 text = barbearia.nome,

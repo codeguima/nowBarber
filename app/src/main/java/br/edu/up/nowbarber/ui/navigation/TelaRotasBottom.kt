@@ -4,7 +4,7 @@ object TelaRotasBottom {
     const val TelaInicio = "inicio"
     const val TelaSearchBarber = "pesquisa"
     const val TelaMeusAgendamentos = "meusAgendamentos"
-    const val TelaDetalhesBarbearia = "detalhesBarbearia"
+    const val TelaServicos = "servicos"
     const val TelaLogin = "login"
     const val TelaCadastroLogin = "cadastrologin"
     const val TelaSeguranca = "seguranca"

@@ -7,6 +7,7 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import br.edu.up.nowbarber.data.models.Servico
 import br.edu.up.nowbarber.ui.viewmodels.AgendamentoViewModel
 import br.edu.up.nowbarber.ui.viewmodels.BarbeariaViewModel
 import br.edu.up.nowbarber.ui.viewmodels.ClienteViewModel
@@ -33,7 +34,7 @@ fun BarberNavHost(
             TelaInicio(state)
         }
         composable(TelaRotasBottom.TelaSearchBarber) {
-            TelaSearchBarber(state, navController, barbeariaViewModel )
+            TelaSearchBarber(state, navController, barbeariaViewModel)
         }
         composable(TelaRotasBottom.TelaMeusAgendamentos) {
             TelaMeusAgendamentos(state, agendamentoViewModel)
@@ -55,17 +56,20 @@ fun BarberNavHost(
         }
 
         composable(
-            route = TelaRotasBottom.TelaDetalhesBarbearia + "/{barbeariaId}",
-            arguments = listOf(
-                navArgument("barbeariaId") { type = NavType.StringType }
-            )
+            route = "${TelaRotasBottom.TelaServicos}/{id}",
+            arguments = listOf(navArgument("id") { type = NavType.StringType })
         ) { backStackEntry ->
-            val barbeariaId = backStackEntry.arguments?.getString("barbeariaId")
-
-            TelaDetalhesBarbearia(state, navController, servicoViewModel, agendamentoViewModel,
-                clienteViewModel, sessionViewModel, barbeariaId
+            val servicoId = backStackEntry.arguments?.getString("id")
+            TelaServicos(
+                state = state,
+                navController = navController,
+                servicoViewModel = servicoViewModel,
+                agendamentoViewModel = agendamentoViewModel,
+                clienteViewModel = clienteViewModel,
+                sessionViewModel = sessionViewModel,
             )
         }
+
 
 
 

@@ -77,7 +77,7 @@ class MainActivity : ComponentActivity() {
 
         val clienteRemoteRepo = ClienteRemoteRepository()
         val clienteLocalRepo = ClienteLocalRepository(db.getClienteDao())
-        val clienteRepository = ClienteRepository(clienteRemoteRepo, clienteLocalRepo)
+        val clienteRepository = ClienteRepository(clienteRemoteRepo, clienteLocalRepo )
 
         val agendamentoRemoteRepo = AgendamentoRemoteRepository()
         val agendamentoLocalRepo = AgendamentoLocalRepository(db.getAgendamentoDao())
@@ -100,5 +100,6 @@ data class DependencyProvider(
     val clienteRepository: ClienteRepository,
     val servicoRepository: ServicoRepository,
     val agendamentoRepository : AgendamentoRepository,
-    val barbeariaRepository : BarbeariaRepository
+    val barbeariaRepository : BarbeariaRepository,
+
 )

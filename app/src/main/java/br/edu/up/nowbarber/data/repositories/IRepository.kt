@@ -18,4 +18,8 @@ interface IRepository<T> {
         emit(Result.failure<Unit>(UnsupportedOperationException("Função não suportada")))
     }
 
+    suspend fun listarPorBarbearia(barbeariaId: String): Flow<List<T>> = flow {
+    }
+
+
 }

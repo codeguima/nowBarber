@@ -1,11 +1,12 @@
 package br.edu.up.nowbarber.data.repositories
 
 import br.edu.up.nowbarber.data.models.Cliente
+import br.edu.up.nowbarber.ui.viewmodels.SessionViewModel
 import kotlinx.coroutines.flow.Flow
 
 class ClienteRepository(
     private val remoteRepo: ClienteRemoteRepository,
-    private val localRepo: ClienteLocalRepository
+    private val localRepo: ClienteLocalRepository,
 ) : IRepository<Cliente> {
 
     override suspend fun gravar(item: Cliente) {
@@ -32,5 +33,6 @@ class ClienteRepository(
     override suspend fun excluir(item: Cliente) {
         localRepo.excluir(item)
         remoteRepo.excluir(item)
+
     }
 }

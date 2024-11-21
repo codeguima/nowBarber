@@ -2,6 +2,8 @@ package br.edu.up.nowbarber.data.models
 
 
 import androidx.room.Dao
+import androidx.room.Insert
+import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Upsert
 import kotlinx.coroutines.flow.Flow
@@ -20,5 +22,11 @@ interface ServicoDao {
 
     @Query("DELETE FROM tab_servico WHERE id = :id")
     suspend fun excluir(id: String)
+
+    @Query("DELETE FROM tab_servico WHERE id NOT IN (:idsRemotos)")
+    suspend fun excluirIdsNaoPresentes(idsRemotos: List<String>)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun atualizarServicos(servicos: List<Servico>)
 }
 

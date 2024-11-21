@@ -56,14 +56,5 @@ class BarbeariaViewModel(
     }
 
 
-    fun navegarParaDetalhesBarbearia(navController: NavController, barbeariaId: String?) {
-        if (barbeariaId.isNullOrBlank()) {
-            // Tratar erro
-            navController.navigate("erro")
-        } else {
-            navController.navigate("detalhesBarbearia/$barbeariaId")
-        }
-    }
-
 }
 
